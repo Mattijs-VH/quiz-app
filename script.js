@@ -1,6 +1,6 @@
 // script.js
 // ES module style. Keep in same folder as index.html and data.json.
-// Author: generated for your QuickQuiz app.
+// Author: updated to add image->name questions and safer submit behavior.
 
 const DATA_PATH = 'data.json'; // relative path
 const MAX_OPTIONS = 4;
@@ -107,14 +107,12 @@ function endSession() {
  * Find a minimal combination of properties (starting at startK up to maxCombo)
  * that uniquely identifies `item` among `items`.
  * Returns { properties: [...], valueTuple: [...] } or null if none found.
- * This helper skips combos where the item lacks any of the properties.
  */
 function findUniquePropertyCombo(item, items, allProps, maxCombo = 3, startK = 2) {
   const maxK = Math.min(maxCombo, allProps.length);
   for (let k = startK; k <= maxK; k++) {
     const combos = combinations(allProps, k);
     for (const combo of combos) {
-      // build tuple of the values for this item; skip combos with missing values
       const tuple = [];
       let skip = false;
       for (const p of combo) {
@@ -127,7 +125,6 @@ function findUniquePropertyCombo(item, items, allProps, maxCombo = 3, startK = 2
       }
       if (skip) continue;
 
-      // count how many items match this tuple
       let count = 0;
       for (const it of items) {
         let match = true;
@@ -181,7 +178,6 @@ function buildQuestionPool() {
         const arr = propValueMap[p][val];
         if (val === 'null' || val === null || val === undefined) continue;
         if (arr.length === 1) {
-          // this unique value identifies a single item
           const correctItem = arr[0];
           questionPool.push({
             category: cat,
@@ -214,9 +210,8 @@ function buildQuestionPool() {
     }
 
     // Find minimal property combinations (size >=2) that uniquely identify items.
-    // This replaces the ad-hoc 2-property combination logic with a general search.
     for (const it of items) {
-      const combo = findUniquePropertyCombo(it, items, allProps, 3, 2); // try k=2..3 (adjust maxCombo if you want)
+      const combo = findUniquePropertyCombo(it, items, allProps, 3, 2); // try k=2..3
       if (combo && combo.properties.length >= 2) {
         questionPool.push({
           category: cat,
@@ -229,10 +224,11 @@ function buildQuestionPool() {
       }
     }
 
-    // Image-based name->image (only for items that have image and at least 2 other items with images for distractors)
+    // Image-based questions
     const itemsWithImages = items.filter(i => i.image);
-    // DEBUG: log how many image items we found for each category
     console.debug(`buildQuestionPool: category=${cat} itemsWithImages=${itemsWithImages.length}`);
+
+    // create name->image entries (show name, choose image)
     if (itemsWithImages.length >= 2) {
       for (const it of itemsWithImages) {
         questionPool.push({
@@ -240,6 +236,20 @@ function buildQuestionPool() {
           type: 'name->image',
           name: it.name,
           correctImage: it.image,
+          sourceItem: it
+        });
+      }
+    }
+
+    // create image->name entries (show image, choose name)
+    // require at least 2 items with images so there is at least one distractor.
+    if (itemsWithImages.length >= 2) {
+      for (const it of itemsWithImages) {
+        questionPool.push({
+          category: cat,
+          type: 'image->name',
+          name: it.name,
+          image: it.image,
           sourceItem: it
         });
       }
@@ -271,11 +281,9 @@ function nextQuestion() {
 
     // Replace any submit/next button inside the form with an "End Session" button
     try {
-      // remove existing submit buttons
       const existingBtns = el.answersForm.querySelectorAll('button.submit-btn');
       existingBtns.forEach(b => b.remove());
 
-      // append End Session button into the form for convenience
       const endBtn = document.createElement('button');
       endBtn.className = 'btn primary submit-btn';
       endBtn.type = 'button';
@@ -303,19 +311,16 @@ function renderQuestion(q, index, total) {
 
   // Build different question types
   if (q.type === 'property->name') {
-    // Prompt: "Which [category] has [property] = [value]?"
     el.questionText.textContent = `Which ${q.category} has ${propLabel(q.property)} = "${q.value}"?`;
     const correct = q.correct;
     const choices = pickNameChoices(q.category, correct, MAX_OPTIONS);
     buildOptionsAndHook(choices, correct, {q});
   } else if (q.type === 'name->property') {
-    // Prompt: "Which [property] belongs to [Name]?"
     el.questionText.textContent = `Which ${propLabel(q.property)} belongs to ${q.name}?`;
     const correct = q.correct;
     const choices = pickPropertyChoices(q.category, q.property, correct, MAX_OPTIONS);
     buildOptionsAndHook(choices, correct, {q});
   } else if (q.type === 'properties->name') {
-    // 2+ property tuple prompt
     const display = q.properties.map((p, i) => `${propLabel(p)}: "${q.valueTuple[i]}"`).join(' ; ');
     el.questionText.textContent = `Which ${q.category} matches — ${display}?`;
     const correct = q.correct;
@@ -327,7 +332,6 @@ function renderQuestion(q, index, total) {
     const candidates = getItemsWithImages(q.category);
     const shuffled = shuffleArray(candidates);
     const choices = shuffled.slice(0, MAX_OPTIONS).map(it => ({ label: it.name, image: it.image }));
-    // ensure correct included
     if (!choices.find(c => c.image === q.correctImage)) {
       if (choices.length < MAX_OPTIONS) {
         choices.push({ label: q.sourceItem.name, image: q.correctImage });
@@ -335,7 +339,6 @@ function renderQuestion(q, index, total) {
         choices[0] = { label: q.sourceItem.name, image: q.correctImage };
       }
     }
-    // shuffle choices
     const final = shuffleArray(choices);
     // render image options as radio with thumbnails and no visible name (alt provides the name)
     el.answersForm.innerHTML = final.map((c, idx) => `
@@ -344,7 +347,6 @@ function renderQuestion(q, index, total) {
         <img src="${escapeAttr(c.image)}" alt="${escapeAttr(c.label)}" style="display:block; max-width:120px; max-height:90px; margin-top:6px; border-radius:6px; border:1px solid #eef2ff;" />
       </label>
     `).join('');
-    // hook submit
     hookSubmit((selected) => {
       const chosen = selected;
       const correctName = q.name;
@@ -354,6 +356,18 @@ function renderQuestion(q, index, total) {
         handleWrong(`Wrong — this image was ${correctName}.`);
       }
     });
+  } else if (q.type === 'image->name') {
+    // Show large image in the question area and textual choices below
+    el.questionText.textContent = `Which ${q.category.slice(0, -1)} is shown?`;
+    el.questionImage.src = q.image;
+    el.questionImage.alt = q.name || 'quiz image';
+    el.questionImage.classList.remove('hidden');
+
+    // Build textual choices. Prefer distractors that also have images (so choices are consistent),
+    // but fall back to all item names if not enough imaged items exist.
+    const correct = q.name;
+    const choices = pickNameChoicesFromImageItems(q.category, correct, MAX_OPTIONS);
+    buildOptionsAndHook(choices, correct, {q});
   } else {
     el.questionText.textContent = 'Unknown question type';
   }
@@ -374,7 +388,6 @@ function buildOptionsAndHook(choices, correct, meta = {}) {
     if (chosen === correct) {
       handleCorrect();
     } else {
-      // Make detailed feedback depending on question meta
       let detail = '';
       const q = meta.q;
       if (!q) {
@@ -386,6 +399,8 @@ function buildOptionsAndHook(choices, correct, meta = {}) {
       } else if (q.type === 'properties->name') {
         const display = q.properties.map((p,i) => `${propLabel(p)}: "${q.valueTuple[i]}"`).join(' ; ');
         detail = `Wrong — the combination (${display}) belongs to ${correct}.`;
+      } else if (q.type === 'image->name') {
+        detail = `Wrong — this image was ${correct}.`;
       } else {
         detail = `Wrong — correct: ${correct}.`;
       }
@@ -398,24 +413,20 @@ function hookSubmit(onSubmit) {
   // Do NOT replace the form node — that can remove the radio inputs just rendered.
   // Instead remove any existing submit buttons inside the form and append a single one.
   try {
-    // Remove existing submit buttons we created earlier (if any)
     const existingBtns = el.answersForm.querySelectorAll('button.submit-btn');
     existingBtns.forEach(b => b.remove());
 
-    // Create submit button
     const submitBtn = document.createElement('button');
     submitBtn.className = 'btn primary submit-btn';
     submitBtn.type = 'button';
     submitBtn.textContent = 'Submit';
     submitBtn.style.marginTop = '12px';
-    submitBtn.dataset.answered = 'false'; // track whether this question has been answered
+    submitBtn.dataset.answered = 'false';
 
     el.answersForm.appendChild(submitBtn);
 
     submitBtn.addEventListener('click', () => {
-      // If already answered, treat this as "Next"
       if (submitBtn.dataset.answered === 'true') {
-        // Advance immediately
         nextQuestion();
         return;
       }
@@ -427,23 +438,19 @@ function hookSubmit(onSubmit) {
       }
       const val = selected.value;
 
-      // Disable all inputs so user can't change answer and re-submit for extra points
+      // Disable inputs to prevent multiple scoring
       const inputs = Array.from(el.answersForm.querySelectorAll('input[name="answer"]'));
       inputs.forEach(i => i.disabled = true);
 
-      // Mark answered to change behavior of this button and avoid double-processing
       submitBtn.dataset.answered = 'true';
 
-      // Run the provided submit handler (will update score/streak/feedback)
       try {
         onSubmit(val);
       } catch (err) {
         console.error('onSubmit handler error', err);
       }
 
-      // Update submit button to act as Next button
       submitBtn.textContent = 'Next';
-      // Ensure Next button in header is enabled as well (keeps existing UI consistent)
       el.nextBtn.disabled = false;
     });
   } catch (err) {
@@ -485,8 +492,20 @@ function pickNameChoices(category, correctName, count=4) {
   return shuffleArray(picks);
 }
 
+// Prefer distractors that have images (so image->name choices come from image-enabled items).
+// Fallback to pickNameChoices if not enough imaged items exist.
+function pickNameChoicesFromImageItems(category, correctName, count=4) {
+  const items = rawData[category] || [];
+  const withImages = items.filter(it => it.image).map(it => it.name);
+  let pool = withImages.length >= (count - 1) ? withImages : items.map(it => it.name);
+  // Ensure we include correctName and produce up to `count` choices
+  const others = pool.filter(n => n !== correctName);
+  const picks = shuffleArray(others).slice(0, count-1);
+  picks.push(correctName);
+  return shuffleArray(picks);
+}
+
 function pickPropertyChoices(category, property, correctValue, count=4) {
-  // gather all distinct values for that property
   const vals = Array.from(new Set((rawData[category] || []).map(it => it[property]).filter(v => v !== undefined && v !== null)));
   const others = vals.filter(v => v !== correctValue);
   const picks = shuffleArray(others).slice(0, count-1);
@@ -500,7 +519,6 @@ function getItemsWithImages(category) {
 
 // helpers
 function showToast(msg) {
-  // small ephemeral top message (simple)
   console.info(msg);
   el.feedback.innerHTML = `<div style="color:var(--muted)">${escapeHtml(msg)}</div>`;
   setTimeout(() => {
@@ -514,7 +532,6 @@ function showFatal(msg) {
 }
 
 function propLabel(p) {
-  // prettify property names
   return p.replace(/_/g, ' ');
 }
 
