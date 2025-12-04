@@ -1,0 +1,63 @@
+{
+  "aminoacids": [
+    {
+      "name": "Alanine",
+      "three": "Ala",
+      "one": "A",
+      "class": "apolair ongeladen",
+      "image": "images/alanine.png"
+    },
+    {
+      "name": "Tyrosine",
+      "three": "Tyr",
+      "one": "Y",
+      "class": "aromatisch",
+      "image": "images/tyrosine.png"
+    },
+    {
+      "name": "Glutamine",
+      "three": "Gln",
+      "one": "Q",
+      "class": "polair ongeladen"
+    },
+    {
+      "name": "Arginine",
+      "three": "Arg",
+      "one": "R",
+      "class": "basisch"
+    },
+    {
+      "name": "Glycine",
+      "three": "Gly",
+      "one": "G",
+      "class": "apolair ongeladen"
+    }
+  ],
+  "bacteria": [
+    {
+      "name": "Staphylococcus aureus",
+      "gram": "positive",
+      "shape": "coccus",
+      "catalase": "positive",
+      "image": "images/staph_aureus.png"
+    },
+    {
+      "name": "Escherichia coli",
+      "gram": "negative",
+      "shape": "rod",
+      "catalase": "positive"
+    },
+    {
+      "name": "Streptococcus pyogenes",
+      "gram": "positive",
+      "shape": "coccus",
+      "catalase": "negative"
+    },
+    {
+      "name": "Pseudomonas aeruginosa",
+      "gram": "negative",
+      "shape": "rod",
+      "catalase": "positive"
+    }
+  ]
+}
