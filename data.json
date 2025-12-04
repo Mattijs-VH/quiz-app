@@ -1,5 +1,5 @@
 {
-  "aminozuren": [
+  "aminozuur": [
     {
       "name": "Alanine",
       "3-lettercode": "Ala",
@@ -122,7 +122,7 @@
     }
   ],
   
-  "bacterien": [
+  "bacterie": [
     {
       "name": "Staphylococcus aureus",
       "gram": "positive",
