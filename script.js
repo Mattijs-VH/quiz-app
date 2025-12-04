@@ -400,7 +400,8 @@ function buildOptionsAndHook(choices, correct, meta = {}) {
         const display = q.properties.map((p,i) => `${propLabel(p)}: "${q.valueTuple[i]}"`).join(' ; ');
         detail = `Wrong — the combination (${display}) belongs to ${correct}.`;
       } else if (q.type === 'image->name') {
-        detail = `Wrong — this image was ${correct}.`;
+        // Show what the user actually selected and also indicate the correct name
+        detail = `Wrong — you selected “${escapeHtml(chosen)}”. The image shown is “${escapeHtml(correct)}”.`;
       } else {
         detail = `Wrong — correct: ${correct}.`;
       }
