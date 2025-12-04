@@ -17,6 +17,7 @@ let bestStreak = Number(localStorage.getItem('quiz_highscore') || 0);
 const el = {
   categories: document.getElementById('categories'),
   startBtn: document.getElementById('startBtn'),
+  shuffleBtn: document.getElementById('shuffleBtn'),
   numQuestions: document.getElementById('numQuestions'),
   quizArea: document.getElementById('quizArea'),
   questionText: document.getElementById('questionText'),
@@ -102,6 +103,54 @@ function endSession() {
   el.quizArea.classList.add('hidden');
 }
 
+/**
+ * Find a minimal combination of properties (starting at startK up to maxCombo)
+ * that uniquely identifies `item` among `items`.
+ * Returns { properties: [...], valueTuple: [...] } or null if none found.
+ * This helper skips combos where the item lacks any of the properties.
+ */
+function findUniquePropertyCombo(item, items, allProps, maxCombo = 3, startK = 2) {
+  const maxK = Math.min(maxCombo, allProps.length);
+  for (let k = startK; k <= maxK; k++) {
+    const combos = combinations(allProps, k);
+    for (const combo of combos) {
+      // build tuple of the values for this item; skip combos with missing values
+      const tuple = [];
+      let skip = false;
+      for (const p of combo) {
+        const v = item[p];
+        if (v === undefined || v === null) {
+          skip = true;
+          break;
+        }
+        tuple.push(v);
+      }
+      if (skip) continue;
+
+      // count how many items match this tuple
+      let count = 0;
+      for (const it of items) {
+        let match = true;
+        for (let i = 0; i < combo.length; i++) {
+          const p = combo[i];
+          const expected = tuple[i];
+          if ((it[p] ?? null) !== expected) {
+            match = false;
+            break;
+          }
+        }
+        if (match) count++;
+        if (count > 1) break;
+      }
+
+      if (count === 1) {
+        return { properties: combo.slice(), valueTuple: tuple.slice() };
+      }
+    }
+  }
+  return null;
+}
+
 // Build question pool (analyze uniqueness)
 function buildQuestionPool() {
   questionPool = [];
@@ -164,30 +213,19 @@ function buildQuestionPool() {
       }
     }
 
-    // Try 2-property combinations for uniqueness (e.g., gram + catalase)
-    const combos = combinations(allProps, 2);
-    for (const combo of combos) {
-      // build map of tuple -> items
-      const tupleMap = {};
-      for (const it of items) {
-        const t = combo.map(k => it[k] ?? '__null__').join('||');
-        if (!tupleMap[t]) tupleMap[t] = [];
-        tupleMap[t].push(it);
-      }
-      for (const tupleKey of Object.keys(tupleMap)) {
-        if (tupleKey.includes('__null__')) continue; // skip combos with missing data
-        const arr = tupleMap[tupleKey];
-        if (arr.length === 1) {
-          const it = arr[0];
-          questionPool.push({
-            category: cat,
-            type: 'properties->name',
-            properties: combo,
-            valueTuple: combo.map(k => it[k]).slice(),
-            correct: it.name,
-            sourceItem: it
-          });
-        }
+    // Find minimal property combinations (size >=2) that uniquely identify items.
+    // This replaces the ad-hoc 2-property combination logic with a general search.
+    for (const it of items) {
+      const combo = findUniquePropertyCombo(it, items, allProps, 3, 2); // try k=2..3 (adjust maxCombo if you want)
+      if (combo && combo.properties.length >= 2) {
+        questionPool.push({
+          category: cat,
+          type: 'properties->name',
+          properties: combo.properties.slice(),
+          valueTuple: combo.valueTuple.slice(),
+          correct: it.name,
+          sourceItem: it
+        });
       }
     }
 
@@ -212,6 +250,12 @@ function buildQuestionPool() {
   questionPool = dedupeQuestions(questionPool);
   // shuffle to randomize
   questionPool = shuffleArray(questionPool);
+
+  // Optional: log counts per type so you can verify composition
+  try {
+    const counts = questionPool.reduce((acc, q) => { acc[q.type] = (acc[q.type]||0)+1; return acc; }, {});
+    console.debug('Question pool built:', counts);
+  } catch (e) {}
 }
 
 // Navigate to next
@@ -260,7 +304,7 @@ function renderQuestion(q, index, total) {
   // Build different question types
   if (q.type === 'property->name') {
     // Prompt: "Which [category] has [property] = [value]?"
-    el.questionText.textContent = `Which ${q.category} has ${propLabel(q.property)} = "${q.value}"?`;
+    el.questionText.textContent = `Which ${q.category.slice(0, -1)} has ${propLabel(q.property)} = "${q.value}"?`;
     const correct = q.correct;
     const choices = pickNameChoices(q.category, correct, MAX_OPTIONS);
     buildOptionsAndHook(choices, correct, {q});
@@ -271,9 +315,9 @@ function renderQuestion(q, index, total) {
     const choices = pickPropertyChoices(q.category, q.property, correct, MAX_OPTIONS);
     buildOptionsAndHook(choices, correct, {q});
   } else if (q.type === 'properties->name') {
-    // 2-property tuple prompt
+    // 2+ property tuple prompt
     const display = q.properties.map((p, i) => `${propLabel(p)}: "${q.valueTuple[i]}"`).join(' ; ');
-    el.questionText.textContent = `Which ${q.category} matches — ${display}?`;
+    el.questionText.textContent = `Which ${q.category.slice(0, -1)} matches — ${display}?`;
     const correct = q.correct;
     const choices = pickNameChoices(q.category, correct, MAX_OPTIONS);
     buildOptionsAndHook(choices, correct, {q});
