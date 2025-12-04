@@ -331,9 +331,17 @@ function buildOptionsAndHook(choices, correct, meta = {}) {
 }
 
 function hookSubmit(onSubmit) {
-  // remove existing listener by replacing the form
-  const newForm = el.answersForm.cloneNode(false);
-  el.answersForm.parentNode.replaceChild(newForm, el.answersForm);
+  // Replace the form element but preserve option inputs by cloning with children.
+  // Also remove any existing buttons (to avoid duplicates), then append a single submit button.
+  const oldForm = el.answersForm;
+  // clone with children so the radio inputs remain
+  const newForm = oldForm.cloneNode(true);
+
+  // remove any existing buttons inside the cloned form to avoid duplicate submit buttons
+  const buttons = newForm.querySelectorAll('button');
+  buttons.forEach(b => b.remove());
+
+  oldForm.parentNode.replaceChild(newForm, oldForm);
   el.answersForm = newForm;
 
   // create submit button
