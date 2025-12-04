@@ -1,42 +1,128 @@
 {
-  "aminoacids": [
+  "aminozuren": [
     {
       "name": "Alanine",
-      "three": "Ala",
-      "one": "A",
-      "class": "apolair ongeladen",
+      "3-lettercode": "Ala",
+      "klasse": "apolair ongeladen",
       "image": "images/alanine.png"
     },
     {
       "name": "Tyrosine",
-      "three": "Tyr",
-      "one": "Y",
-      "class": "aromatisch",
+      "3-lettercode": "Tyr",
+      "klasse": "aromatisch",
       "image": "images/tyrosine.png"
     },
     {
       "name": "Glutamine",
-      "three": "Gln",
-      "one": "Q",
-      "class": "polair ongeladen",
+      "3-lettercode": "Gln",
+      "klasse": "polair ongeladen",
       "image": "images/glutamine.png"
     },
     {
       "name": "Arginine",
-      "three": "Arg",
-      "one": "R",
-      "class": "basisch",
+      "3-lettercode": "Arg",
+      "klasse": "positief geladen/basisch",
       "image": "images/arginine.png"
     },
     {
       "name": "Glycine",
-      "three": "Gly",
-      "one": "G",
-      "class": "apolair ongeladen",
+      "3-lettercode": "Gly",
+      "klasse": "apolair ongeladen",
       "image": "images/glycine.png"
+    },
+    {
+      "name": "Valine",
+      "3-lettercode": "Val",
+      "klasse": "apolair ongeladen",
+      "image": "images/valine.png"
+    },
+    {
+      "name": "Leucine",
+      "3-lettercode": "Leu",
+      "klasse": "apolair ongeladen",
+      "image": "images/leucine.png"
+    },
+    {
+      "name": "Methionine",
+      "3-lettercode": "Met",
+      "klasse": "apolair ongeladen",
+      "image": "images/methionine.png"
+    },
+    {
+      "name": "Isoleucine",
+      "3-lettercode": "Ile",
+      "klasse": "apolair ongeladen",
+      "image": "images/isoleucine.png"
+    },
+    {
+      "name": "Serine",
+      "3-lettercode": "Ser",
+      "klasse": "polair ongeladen",
+      "image": "images/serine.png"
+    },
+    {
+      "name": "Threonine",
+      "3-lettercode": "Thr",
+      "klasse": "polair ongeladen",
+      "image": "images/threonine.png"
+    },
+    {
+      "name": "Cysteine",
+      "3-lettercode": "Cys",
+      "klasse": "polair ongeladen",
+      "image": "images/cysteine.png"
+    },
+    {
+      "name": "Proline",
+      "3-lettercode": "Pro",
+      "klasse": "polair ongeladen",
+      "image": "images/proline.png"
+    },
+    {
+      "name": "Asparagine",
+      "3-lettercode": "Asn",
+      "klasse": "polair ongeladen",
+      "image": "images/asparagine.png"
+    },
+    {
+      "name": "Lysine",
+      "3-lettercode": "Lys",
+      "klasse": "positief geladen/basisch",
+      "image": "images/lysine.png"
+    },
+    {
+      "name": "Histidine",
+      "3-lettercode": "His",
+      "klasse": "positief geladen/basisch",
+      "image": "images/histidine.png"
+    },
+    {
+      "name": "Aspartaat",
+      "3-lettercode": "Asp",
+      "klasse": "negatief geladen/zuur",
+      "image": "images/aspartaat.png"
+    },
+    {
+      "name": "Glutamaat",
+      "3-lettercode": "Glu",
+      "klasse": "negatief geladen/zuur",
+      "image": "images/glutamaat.png"
+    },
+    {
+      "name": "Fenylalanine",
+      "3-lettercode": "Phe",
+      "klasse": "aromatisch",
+      "image": "images/fenylalanine.png"
+    },
+    {
+      "name": "Tryptofaan",
+      "3-lettercode": "Trp",
+      "klasse": "aromatisch",
+      "image": "images/tryptofaan.png"
     }
   ],
-  "bacteria": [
+  
+  "bacterien": [
     {
       "name": "Staphylococcus aureus",
       "gram": "positive",
