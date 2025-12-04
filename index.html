@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QuickQuiz Generator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>QuickQuiz Generator</h1>
+      <p class="subtitle">Select categories, then press Start. Multiple-choice quizzes with images & uniqueness checks.</p>
+    </header>
+
+    <section id="setup" class="card">
+      <h2>Select categories</h2>
+      <div id="categories" class="checkbox-grid">
+        <!-- checkboxes populated by script -->
+      </div>
+
+      <div class="controls">
+        <label>
+          Questions per session:
+          <input id="numQuestions" type="number" min="1" value="20" />
+        </label>
+        <button id="startBtn" class="btn primary">Start Quiz</button>
+        <button id="shuffleBtn" class="btn">Shuffle Questions</button>
+      </div>
+
+      <div class="hint">
+        Tip: Add more categories or properties in <code>data.json</code>. Images should be placed in <code>/images/</code>.
+      </div>
+    </section>
+
+    <section id="quizArea" class="card hidden">
+      <div class="quiz-header">
+        <div class="scoreboard">
+          <div>Score: <span id="score">0</span></div>
+          <div>🔥 Streak: <span id="streak">0</span></div>
+          <div>🏆 Highscore (best streak): <span id="highscore">0</span></div>
+        </div>
+        <div>
+          <button id="endBtn" class="btn">End Session</button>
+          <button id="nextBtn" class="btn" disabled>Next Question</button>
+        </div>
+      </div>
+
+      <div id="questionCard" class="question-card">
+        <div id="qIndex" class="q-index"></div>
+        <div id="questionText" class="question-text"></div>
+        <img id="questionImage" class="question-image hidden" alt="structure / image" />
+        <form id="answersForm" class="answers-form"></form>
+        <div id="feedback" class="feedback"></div>
+      </div>
+    </section>
+
+    <footer class="card small">
+      <div>
+        Built for quick study. Add more data in <code>data.json</code>. Images in <code>/images/</code>.
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js" type="module"></script>
+</body>
+</html>
