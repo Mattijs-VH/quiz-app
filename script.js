@@ -353,7 +353,7 @@ function renderQuestion(q, index, total) {
       if (chosen === correctName) {
         handleCorrect();
       } else {
-        handleWrong(`Wrong — you selected “${escapeHtml(chosen)}”.`);
+        handleWrong(` you selected “${escapeHtml(chosen)}”.`);
       }
     });
   } else if (q.type === 'image->name') {
