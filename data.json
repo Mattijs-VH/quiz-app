@@ -124,29 +124,144 @@
   
   "bacteria": [
     {
-      "name": "Staphylococcus aureus",
-      "gram": "positive",
-      "shape": "coccus",
-      "catalase": "positive",
-      "image": "images/staph_aureus.png"
-    },
-    {
-      "name": "Escherichia coli",
-      "gram": "negative",
-      "shape": "rod",
-      "catalase": "positive"
-    },
-    {
-      "name": "Streptococcus pyogenes",
-      "gram": "positive",
-      "shape": "coccus",
-      "catalase": "negative"
+      "name": "Enterobacterales",
+      "gram": "negatief",
+      "vorm": "bacillen",
+      "oxidase": "negatief",
+      "pathologie": "sommige stammen pathogeen"
     },
     {
       "name": "Pseudomonas aeruginosa",
-      "gram": "negative",
-      "shape": "rod",
-      "catalase": "positive"
-    }
+      "gram": "negatief",
+      "vorm": "bacillen",
+      "oxidase": "positief",
+      "pathologie": "opportunistische nosocomiale pathogeen"
+    },
+    {
+      "name": "Staphylococcus aureus",
+      "gram": "positief",
+      "vorm": "kokken",
+      "katalase": "positief",
+      "coagulase": "positief",
+      "hemolyse": "beta",
+      "pathologie": "frequent pathogeen: huidinfecties",
+      "groepering": "trosjes"
+    },
+    {
+      "name": "Staphylococcus epidermidis",
+      "gram": "positief",
+      "vorm": "kokken",
+      "katalase": "positief",
+      "coagulase": "negatief",
+      "hemolyse": "gamma",
+      "pathologie": "commensaal van de huid",
+      "groepering": "trosjes"
+    },
+    {
+      "name": "Streptococcus viridans",
+      "gram": "positief",
+      "vorm": "kokken",
+      "katalase": "negatief",
+      "hemolyse": "alfa",
+      "pathologie": "commensalen ter hoogte van de mond",
+      "groepering": "ketens"
+    },
+    {
+      "name": "Streptococcus pneumonia",
+      "gram": "positief",
+      "vorm": "kokken",
+      "katalase": "negatief",
+      "hemolyse": "alfa",
+      "pathologie": "verwekker longontsteking",
+      "groepering": "ketens"
+    },
+    {
+      "name": "Streptococcus pyogenes",
+      "gram": "positief",
+      "vorm": "kokken",
+      "katalase": "negatief",
+      "hemolyse": "beta",
+      "pathologie": "verwekker keelontsteking",
+      "groepering": "ketens"
+    },
+    {
+      "name": "Streptococcus agalactiae",
+      "gram": "positief",
+      "vorm": "kokken",
+      "katalase": "negatief",
+      "hemolyse": "beta",
+      "pathologie": "verwekker meningitis",
+      "groepering": "ketens"
+    },
+    {
+      "name": "Myobacterium tuberculosis",
+      "vorm": "bacillen",
+      "pathologie": "tuberculose"
+    },
+    {
+      "name": "Mycoplasma pneumonia",
+      "vorm": "klein zonder celwand",
+      "pathologie": "longontsteking"
+    },
+    {
+      "name": "Neisseria gonorrhoeae",
+      "gram": "negatief",
+      "vorm": "kokken",
+      "pathologie": "verwekker gonorroe",
+      "groepering": "per 2"
+    },
+    {
+      "name": "Neisseria meningitidis",
+      "gram": "negatief",
+      "vorm": "kokken",
+      "pathologie": "verwekker hersenvliesontsteking",
+      "groepering": "per 2"
+    },
+    {
+      "name": "Borrelia burgdorferi",
+      "vorm": "spirocheet",
+      "pathologie": "verwekker ziekte van Lyme"
+    },
+    {
+      "name": "Treponema pallidum",
+      "vorm": "spirocheet",
+      "pathologie": "verwekker syfillis"
+    },
+    {
+      "name": "Vibrio cholerae",
+      "gram": "negatief",
+      "vorm": "komma-vormig",
+      "pathologie": "oorzaak van cholera (darminfectie)"
+    },
+    {
+      "name": "Clostridium tetani",
+      "gram": "positief",
+      "vorm": "bacillen",
+      "katalase": "negatief",
+      "pathologie": "veroorzaakt tetanus (= spastische verlamming)",
+      "ademhaling": "anaeroob"
+    },
+    {
+      "name": "Clostridium botulinum",
+      "gram": "positief",
+      "vorm": "bacillen",
+      "katalase": "negatief",
+      "pathologie": "veroorzaakt botumisme (= slappe verlamming)",
+      "ademhaling": "anaeroob"
+    },
+    {
+      "name": "Bacillus",
+      "gram": "positief",
+      "vorm": "bacillen",
+      "katalase": "positief",
+      "pathologie": "vormt endosporen",
+      "ademhaling": "facultatief anaeroob"
+    },
+    {
+      "name": "Lactobacillus",
+      "gram": "positief",
+      "vorm": "bacillen",
+      "pathologie": "niet-sporenvormende melkzuurbacterie, commensaal van darm en vagina"
+    }  
   ]
 }
