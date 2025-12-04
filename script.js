@@ -331,38 +331,36 @@ function buildOptionsAndHook(choices, correct, meta = {}) {
 }
 
 function hookSubmit(onSubmit) {
-  // Replace the form element but preserve option inputs by cloning with children.
-  // Also remove any existing buttons (to avoid duplicates), then append a single submit button.
-  const oldForm = el.answersForm;
-  // clone with children so the radio inputs remain
-  const newForm = oldForm.cloneNode(true);
+  // Do NOT replace the form node — that can remove the radio inputs just rendered.
+  // Instead remove any existing submit buttons inside the form and append a single one.
+  try {
+    // Remove existing submit buttons we created earlier (if any)
+    const existingBtns = el.answersForm.querySelectorAll('button.submit-btn');
+    existingBtns.forEach(b => b.remove());
 
-  // remove any existing buttons inside the cloned form to avoid duplicate submit buttons
-  const buttons = newForm.querySelectorAll('button');
-  buttons.forEach(b => b.remove());
+    // Create submit button
+    const submitBtn = document.createElement('button');
+    submitBtn.className = 'btn primary submit-btn';
+    submitBtn.type = 'button';
+    submitBtn.textContent = 'Submit';
+    submitBtn.style.marginTop = '12px';
 
-  oldForm.parentNode.replaceChild(newForm, oldForm);
-  el.answersForm = newForm;
+    el.answersForm.appendChild(submitBtn);
 
-  // create submit button
-  const submitBtn = document.createElement('button');
-  submitBtn.className = 'btn primary';
-  submitBtn.type = 'button';
-  submitBtn.textContent = 'Submit';
-  submitBtn.style.marginTop = '12px';
-  el.answersForm.appendChild(submitBtn);
-
-  submitBtn.addEventListener('click', () => {
-    const selected = el.answersForm.querySelector('input[name="answer"]:checked');
-    if (!selected) {
-      showToast('Pick an answer first.');
-      return;
-    }
-    const val = selected.value;
-    onSubmit(val);
-    // after answering, enable Next
-    el.nextBtn.disabled = false;
-  });
+    submitBtn.addEventListener('click', () => {
+      const selected = el.answersForm.querySelector('input[name="answer"]:checked');
+      if (!selected) {
+        showToast('Pick an answer first.');
+        return;
+      }
+      const val = selected.value;
+      onSubmit(val);
+      // after answering, enable Next
+      el.nextBtn.disabled = false;
+    });
+  } catch (err) {
+    console.error('hookSubmit error', err);
+  }
 }
 
 // Correct/wrong handlers
