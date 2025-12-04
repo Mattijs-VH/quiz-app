@@ -330,6 +330,8 @@ function buildOptionsAndHook(choices, correct, meta = {}) {
   });
 }
 
+// Replace the existing hookSubmit function with this version.
+
 function hookSubmit(onSubmit) {
   // Do NOT replace the form node — that can remove the radio inputs just rendered.
   // Instead remove any existing submit buttons inside the form and append a single one.
@@ -344,18 +346,42 @@ function hookSubmit(onSubmit) {
     submitBtn.type = 'button';
     submitBtn.textContent = 'Submit';
     submitBtn.style.marginTop = '12px';
+    submitBtn.dataset.answered = 'false'; // track whether this question has been answered
 
     el.answersForm.appendChild(submitBtn);
 
     submitBtn.addEventListener('click', () => {
+      // If already answered, treat this as "Next"
+      if (submitBtn.dataset.answered === 'true') {
+        // Advance immediately
+        nextQuestion();
+        return;
+      }
+
       const selected = el.answersForm.querySelector('input[name="answer"]:checked');
       if (!selected) {
         showToast('Pick an answer first.');
         return;
       }
       const val = selected.value;
-      onSubmit(val);
-      // after answering, enable Next
+
+      // Disable all inputs so user can't change answer and re-submit for extra points
+      const inputs = Array.from(el.answersForm.querySelectorAll('input[name="answer"]'));
+      inputs.forEach(i => i.disabled = true);
+
+      // Mark answered to change behavior of this button and avoid double-processing
+      submitBtn.dataset.answered = 'true';
+
+      // Run the provided submit handler (will update score/streak/feedback)
+      try {
+        onSubmit(val);
+      } catch (err) {
+        console.error('onSubmit handler error', err);
+      }
+
+      // Update submit button to act as Next button
+      submitBtn.textContent = 'Next';
+      // Ensure Next button in header is enabled as well (keeps existing UI consistent)
       el.nextBtn.disabled = false;
     });
   } catch (err) {
