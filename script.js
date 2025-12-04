@@ -196,9 +196,11 @@ function buildQuestionPool() {
       }
     }
 
-    // Image-based name->image (only for items that have image and at least 3 other items with images for distractors)
+    // Image-based name->image (only for items that have image and at least 2 other items with images for distractors)
     const itemsWithImages = items.filter(i => i.image);
-    if (itemsWithImages.length >= 4) {
+    // DEBUG: log how many image items we found for each category
+    console.debug(`buildQuestionPool: category=${cat} itemsWithImages=${itemsWithImages.length}`);
+    if (itemsWithImages.length >= 2) {
       for (const it of itemsWithImages) {
         questionPool.push({
           category: cat,
@@ -227,6 +229,26 @@ function nextQuestion() {
     showToast(`Session finished. Score ${sessionScore}/${currentSessionQuestions.length}. Best streak: ${bestStreak}`);
     el.nextBtn.disabled = true;
     el.feedback.innerHTML = `<div class="correct">Session finished — Score ${sessionScore}/${currentSessionQuestions.length}. Best streak: ${bestStreak}</div>`;
+
+    // Replace any submit/next button inside the form with an "End Session" button
+    try {
+      // remove existing submit buttons
+      const existingBtns = el.answersForm.querySelectorAll('button.submit-btn');
+      existingBtns.forEach(b => b.remove());
+
+      // append End Session button into the form for convenience
+      const endBtn = document.createElement('button');
+      endBtn.className = 'btn primary submit-btn';
+      endBtn.type = 'button';
+      endBtn.textContent = 'End Session';
+      endBtn.style.marginTop = '12px';
+      endBtn.addEventListener('click', () => {
+        endSession();
+      });
+      el.answersForm.appendChild(endBtn);
+    } catch (err) {
+      console.error('Error while creating End Session button', err);
+    }
     return;
   }
   const q = currentSessionQuestions[currentQuestionIndex];
@@ -262,22 +284,25 @@ function renderQuestion(q, index, total) {
     buildOptionsAndHook(choices, correct, {q});
   } else if (q.type === 'name->image') {
     el.questionText.textContent = `Which image shows ${q.name}?`;
-    // present image options (4 images)
+    // present image options (up to MAX_OPTIONS images)
     const candidates = getItemsWithImages(q.category);
     const shuffled = shuffleArray(candidates);
     const choices = shuffled.slice(0, MAX_OPTIONS).map(it => ({ label: it.name, image: it.image }));
     // ensure correct included
     if (!choices.find(c => c.image === q.correctImage)) {
-      choices[0] = { label: q.sourceItem.name, image: q.correctImage };
+      if (choices.length < MAX_OPTIONS) {
+        choices.push({ label: q.sourceItem.name, image: q.correctImage });
+      } else {
+        choices[0] = { label: q.sourceItem.name, image: q.correctImage };
+      }
     }
     // shuffle choices
     const final = shuffleArray(choices);
-    // render image options as radio with thumbnails
+    // render image options as radio with thumbnails and no visible name (alt provides the name)
     el.answersForm.innerHTML = final.map((c, idx) => `
-      <label class="answer-option">
-        <input type="radio" name="answer" value="${escapeAttr(c.label)}" ${idx===0 ? '' : ''}>
-        <span style="font-weight:600">${escapeHtml(c.label)}</span>
-        <img src="${escapeAttr(c.image)}" style="max-width:120px;max-height:90px;margin-left:10px;border-radius:6px;border:1px solid #eef2ff;" />
+      <label class="answer-option" style="display:inline-block; margin:6px; text-align:center;">
+        <input type="radio" name="answer" value="${escapeAttr(c.label)}" aria-label="${escapeAttr(c.label)}" />
+        <img src="${escapeAttr(c.image)}" alt="${escapeAttr(c.label)}" style="display:block; max-width:120px; max-height:90px; margin-top:6px; border-radius:6px; border:1px solid #eef2ff;" />
       </label>
     `).join('');
     // hook submit
@@ -329,8 +354,6 @@ function buildOptionsAndHook(choices, correct, meta = {}) {
     }
   });
 }
-
-// Replace the existing hookSubmit function with this version.
 
 function hookSubmit(onSubmit) {
   // Do NOT replace the form node — that can remove the radio inputs just rendered.
