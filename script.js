@@ -304,7 +304,7 @@ function renderQuestion(q, index, total) {
   // Build different question types
   if (q.type === 'property->name') {
     // Prompt: "Which [category] has [property] = [value]?"
-    el.questionText.textContent = `Which ${q.category.slice(0, -1)} has ${propLabel(q.property)} = "${q.value}"?`;
+    el.questionText.textContent = `Which ${q.category} has ${propLabel(q.property)} = "${q.value}"?`;
     const correct = q.correct;
     const choices = pickNameChoices(q.category, correct, MAX_OPTIONS);
     buildOptionsAndHook(choices, correct, {q});
@@ -317,7 +317,7 @@ function renderQuestion(q, index, total) {
   } else if (q.type === 'properties->name') {
     // 2+ property tuple prompt
     const display = q.properties.map((p, i) => `${propLabel(p)}: "${q.valueTuple[i]}"`).join(' ; ');
-    el.questionText.textContent = `Which ${q.category.slice(0, -1)} matches — ${display}?`;
+    el.questionText.textContent = `Which ${q.category} matches — ${display}?`;
     const correct = q.correct;
     const choices = pickNameChoices(q.category, correct, MAX_OPTIONS);
     buildOptionsAndHook(choices, correct, {q});
