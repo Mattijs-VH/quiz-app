@@ -15,7 +15,6 @@ let sessionStreak = 0;
 let bestStreak = Number(localStorage.getItem('quiz_highscore') || 0);
 
 const el = {
-  categories: document.getElementById('categories'),
   startBtn: document.getElementById('startBtn'),
   shuffleBtn: document.getElementById('shuffleBtn'),
   numQuestions: document.getElementById('numQuestions'),
