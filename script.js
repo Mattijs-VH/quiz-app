@@ -358,7 +358,7 @@ function renderQuestion(q, index, total) {
     });
   } else if (q.type === 'image->name') {
     // Show large image in the question area and textual choices below
-    el.questionText.textContent = `Which ${q.category.slice(0, -1)} is shown?`;
+    el.questionText.textContent = `Which ${q.category} is shown?`;
     el.questionImage.src = q.image;
     el.questionImage.alt = q.name || 'quiz image';
     el.questionImage.classList.remove('hidden');
