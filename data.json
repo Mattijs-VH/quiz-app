@@ -290,11 +290,11 @@
       "image": "images/fac_anaeroob.png"
     },
     {
-      "name": "Lactosefermentasie MacConkey bodem +",
+      "name": "Lactosefermentatie+ MacConkey bodem",
       "image": "images/mck_lac_pos.png"
     },
     {
-      "name": "Lactosefermentasie MacConkey bodem -",
+      "name": "Lactosefermentatie- MacConkey bodem",
       "image": "images/mck_lac_neg.png"
     },
     {
