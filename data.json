@@ -263,5 +263,90 @@
       "vorm": "bacillen",
       "pathologie": "niet-sporenvormende melkzuurbacterie, commensaal van darm en vagina"
     }  
+  ],
+  "microbiologie-tests": [
+    {
+      "name": "Alfa-hemolyse",
+      "image": "images/alfa.png"
+    },
+    {
+      "name": "Beta-hemolyse",
+      "image": "images/beta.png"
+    },
+    {
+      "name": "Gamma-hemolyse",
+      "image": "images/gamma.png"
+    },
+    {
+      "name": "Aeroob",
+      "image": "images/aeroob.png"
+    },
+    {
+      "name": "Anaeroob",
+      "image": "images/anaeroob.png"
+    },
+    {
+      "name": "Facultatief anaeroob",
+      "image": "images/fac_anaeroob.png"
+    },
+    {
+      "name": "Lactosefermentasie MacConkey bodem +",
+      "image": "images/mck_lac_pos.png"
+    },
+    {
+      "name": "Lactosefermentasie MacConkey bodem -",
+      "image": "images/mck_lac_neg.png"
+    },
+    {
+      "name": "FRB suikervergisting",
+      "image": "images/FRB+.png"
+    },
+    {
+      "name": "FRB geen suikervergisting",
+      "image": "images/FRB-.png"
+    },
+    {
+      "name": "KIA: lactose-, glucose-, gas-, H2S-",
+      "image": "images/kia0.png"
+    },
+    {
+      "name": "KIA: lactose+, glucose+, gas-, H2S-",
+      "image": "images/kia_lg.png"
+    },
+    {
+      "name": "KIA: lactose+, glucose+, gas+, H2S-",
+      "image": "images/kia_lgg.png"
+    },
+    {
+      "name": "KIA: lactose+, glucose-, gas-, H2S-",
+    },
+    {
+      "name": "KIA: lactose-, glucose?, gas?, H2S+",
+      "image": "images/kia_h.png"
+    },
+    {
+      "name": "KIA: lactose+, glucose+, gas?, H2S+",
+      "image": "images/kia_lgh.png"
+    },
+    {
+      "name": "KIA: lactose-, glucose+, gas?, H2S-",
+      "image": "images/kia_g.png"
+    },
+    {
+      "name": "Urease-",
+      "image": "images/urease-.png"
+    },
+    {
+      "name": "Urease+",
+      "image": "images/urease+.png"
+    },
+    {
+      "name": "Indol-",
+      "image": "images/indol-.png"
+    },
+    {
+      "name": "Indol+",
+      "image": "images/indol+.png"
+    }
   ]
 }
