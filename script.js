@@ -17,7 +17,6 @@ let bestStreak = Number(localStorage.getItem('quiz_highscore') || 0);
 const el = {
   categories: document.getElementById('categories'),
   startBtn: document.getElementById('startBtn'),
-  shuffleBtn: document.getElementById('shuffleBtn'),
   numQuestions: document.getElementById('numQuestions'),
   quizArea: document.getElementById('quizArea'),
   questionText: document.getElementById('questionText'),
@@ -47,10 +46,6 @@ async function init() {
   buildCategoryCheckboxes(Object.keys(rawData));
   el.highscore.textContent = bestStreak;
   el.startBtn.addEventListener('click', startQuiz);
-  el.shuffleBtn.addEventListener('click', () => {
-    buildQuestionPool(); 
-    showToast('Question pool shuffled.');
-  });
   el.nextBtn.addEventListener('click', nextQuestion);
   el.endBtn.addEventListener('click', endSession);
 }
