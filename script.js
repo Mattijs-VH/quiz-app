@@ -353,7 +353,7 @@ function renderQuestion(q, index, total) {
       if (chosen === correctName) {
         handleCorrect();
       } else {
-        handleWrong(`Wrong — this image was ${correctName}.`);
+        handleWrong(`Wrong — you selected “${escapeHtml(chosen)}”.`);
       }
     });
   } else if (q.type === 'image->name') {
@@ -401,7 +401,7 @@ function buildOptionsAndHook(choices, correct, meta = {}) {
         detail = `Wrong — the combination (${display}) belongs to ${correct}.`;
       } else if (q.type === 'image->name') {
         // Show what the user actually selected and also indicate the correct name
-        detail = `Wrong — you selected “${escapeHtml(chosen)}”. The image shown is “${escapeHtml(correct)}”.`;
+        detail = `Wrong — ${correct} is what was shown here`;
       } else {
         detail = `Wrong — correct: ${correct}.`;
       }
