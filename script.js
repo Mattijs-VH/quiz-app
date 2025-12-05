@@ -584,3 +584,59 @@ function combinations(arr, k) {
   go(0, []);
   return res;
 }
+
+// --- IMAGE ZOOM / DRAG / SCROLL ---
+
+let currentScale = 1;
+let isDragging = false;
+let startX, startY, imgX = 0, imgY = 0;
+
+const modal = document.getElementById("imgModal");
+const zoomImg = document.getElementById("zoomImg");
+
+// Open modal when clicking any quiz image
+document.addEventListener("click", (e) => {
+  const img = e.target.closest("img");
+  if (!img || !img.src) return;
+
+  zoomImg.src = img.src;
+  currentScale = 1;
+  imgX = 0;
+  imgY = 0;
+  zoomImg.style.transform = "translate(0px, 0px) scale(1)";
+  
+  modal.style.display = "flex";
+});
+
+// Close on clicking background
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});
+
+// Dragging logic
+zoomImg.addEventListener("mousedown", (e) => {
+  isDragging = true;
+  startX = e.clientX - imgX;
+  startY = e.clientY - imgY;
+});
+
+document.addEventListener("mouseup", () => {
+  isDragging = false;
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  imgX = e.clientX - startX;
+  imgY = e.clientY - startY;
+  zoomImg.style.transform = `translate(${imgX}px, ${imgY}px) scale(${currentScale})`;
+});
+
+// Scroll to zoom
+zoomImg.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  const scaleAmount = e.deltaY < 0 ? 0.1 : -0.1;
+  currentScale = Math.min(Math.max(0.2, currentScale + scaleAmount), 5);
+  zoomImg.style.transform = `translate(${imgX}px, ${imgY}px) scale(${currentScale})`;
+});
