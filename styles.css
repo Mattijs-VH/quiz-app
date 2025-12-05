@@ -65,3 +65,28 @@ h1 { margin:0; font-size:1.6rem; }
   .question-image { max-width:100%; height:auto; }
   .controls { flex-direction:column; align-items:flex-start; gap:8px; }
 }
+/* Image zoom modal */
+#imgModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#imgModal img {
+  max-width: 90vw;
+  max-height: 90vh;
+  cursor: grab;
+  transition: transform 0.1s ease;
+}
+
+#imgModal img:active {
+  cursor: grabbing;
+}
+
