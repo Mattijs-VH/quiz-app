@@ -348,15 +348,5 @@
       "name": "Indol+",
       "image": "images/indol+.png"
     }
-  ],
-  "test": [
-    {
-      "name": "test1",
-      "image": "images/test1.png"
-    },
-    {
-      "name": "test2",
-      "image": "images/test2.png"
-    }
   ]
 }
