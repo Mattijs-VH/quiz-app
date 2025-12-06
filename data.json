@@ -348,5 +348,131 @@
       "name": "Indol+",
       "image": "images/indol+.png"
     }
+  ],
+  "biologie lab - zenuwweefsel": [
+    {
+      "name": "Bloedvat",
+      "image": "images/zw_bloedvat.png"
+    },
+    {
+      "name": "Gliacellen (niet-specifiek)",
+      "image": "images/zw_gliacellen.png"
+    },
+    {
+      "name": "Perikaryon",
+      "image": "images/zw_perikaryon.png"
+    },
+    {
+      "name": "Nucleus",
+      "image": "images/zw_nucleus.png"
+    },
+    {
+      "name": "Nucleolus",
+      "image": "images/zw_nucleolus.png"
+    },
+    {
+      "name": "Moleculaire laag",
+      "image": "images/zw_mol-laag.png"
+    },
+    {
+      "name": "Granulaire laag",
+      "image": "images/zw_gran-laag.png"
+    },
+    {
+      "name": "Purkinjelaag",
+      "image": "images/zw_purkinjelaag.png"
+    },
+    {
+      "name": "Dendrieten-boom",
+      "image": "images/zw_dendrietenboom.png"
+    },
+    {
+      "name": "Ruggenmerg",
+      "image": "images/zw_ruggenmerg.png"
+    },
+    {
+      "name": "Processus spinosus",
+      "image": "images/zw_proc-spin.png"
+    },
+    {
+      "name": "processus transversus",
+      "image": "images/zw_proc-tran.png"
+    },
+    {
+      "name": "Ependym kanaal",
+      "image": "images/zw_ependym-kanaal.png"
+    },
+    {
+      "name": "Grijze stof",
+      "image": "images/zw_grijze-stof.png"
+    },
+    {
+      "name": "Witte stof",
+      "image": "images/zw_witte-stof.png"
+    },
+    {
+      "name": "Dorsale hoorn",
+      "image": "images/zw_dors-hoorn.png"
+    },
+    {
+      "name": "Ventrale hoorn",
+      "image": "images/zw_vent-hoorn.png"
+    },
+    {
+      "name": "Corpus Vertebrae",
+      "image": "images/zw_corp-vert.png"
+    },
+    {
+      "name": "Spinaal ganglion",
+      "image": "images/zw_spin-gang.png"
+    },
+    {
+      "name": "Zenuwbundel",
+      "image": "images/zw_zenuwbundel.png"
+    },
+    {
+      "name": "Skeletspier",
+      "image": "images/zw_skeletspied.png"
+    },
+    {
+      "name": "Perikaryon motor-neuron",
+      "image": "images/zw_perikaryon_motorisch.png"
+    },
+    {
+      "name": "Axon",
+      "image": "images/zw_axon.png"
+    },
+    {
+      "name": "Myelineschede",
+      "image": "images/zw_myelineschede.png"
+    },
+    {
+      "name": "Gliacel: oligodendrocyt",
+      "image": "images/zw_glia_oligo.png"
+    },
+    {
+      "name": "Gliacel: astrocyt",
+      "image": "images/zw_glia_astro.png"
+    },
+    {
+      "name": "Gliacel: microglia-cel",
+      "image": "images/zw_glia_micro.png"
+    },
+    {
+      "name": "Gliacel: ependymcel",
+      "image": "images/zw_glia_ependym.png"
+    },
+    {
+      "name": "Perifeer ganglion",
+      "image": "images/zw_peri-gang.png"
+    },
+    {
+      "name": "Gladde spier: dwars doorgesneden",
+      "image": "images/zw_glad-spier-dwars.png"
+    },
+    {
+      "name": "Gladde spier: overlangs doorgesneden",
+      "image": "images/zw_glad-spier-overl.png"
+    }
   ]
 }
