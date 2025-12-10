@@ -474,5 +474,23 @@
       "name": "Gladde spier: overlangs doorgesneden",
       "image": "images/zw_glad-spier-overl.png"
     }
+  ],
+  "test": [
+    {
+      "name": "Ruggenmerg",
+      "images": ["images/zw_dors-hoorn.png", "images/zw_vent-hoorn.png", "images/zw_grijze-stof.png", "images/zw_ruggenmerg.png"]
+    },
+    {
+      "name": "Perifeer ganglion",
+      "image": "images/zw_peri-ganglion.png"
+    },
+    {
+      "name": "Gladde spier: dwars doorgesneden",
+      "image": "images/zw_glad-spier-dwars.png"
+    },
+    {
+      "name": "Gladde spier: overlangs doorgesneden",
+      "image": "images/zw_glad-spier-overl.png"
+    }
   ]
 }
