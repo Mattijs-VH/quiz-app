@@ -71,6 +71,10 @@ function buildCategoryCheckboxes(categories) {
   });
 }
 
+function randomFrom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 // Start Quiz
 function startQuiz() {
   selectedCategories = Array.from(el.categories.querySelectorAll('input:checked')).map(i => i.dataset.cat);
@@ -155,6 +159,14 @@ function buildQuestionPool() {
   for (const cat of Object.keys(rawData)) {
     if (selectedCategories.length && !selectedCategories.includes(cat)) continue;
     const items = rawData[cat] || [];
+    for (const it of items) {
+    if (Array.isArray(it.images)) continue;
+    if (it.image) {
+      it.images = [it.image];
+      } else {
+      it.images = []; // no images
+      }
+    }
     if (!Array.isArray(items) || items.length === 0) continue;
 
     // collect property keys (exclude name and image)
@@ -225,7 +237,7 @@ function buildQuestionPool() {
     }
 
     // Image-based questions
-    const itemsWithImages = items.filter(i => i.image);
+    const itemsWithImages = items.filter(i => i.images && i.images.length > 0);
     console.debug(`buildQuestionPool: category=${cat} itemsWithImages=${itemsWithImages.length}`);
 
     // create name->image entries (show name, choose image)
@@ -235,7 +247,7 @@ function buildQuestionPool() {
           category: cat,
           type: 'name->image',
           name: it.name,
-          correctImage: it.image,
+          correctImage: it.images,
           sourceItem: it
         });
       }
@@ -249,7 +261,7 @@ function buildQuestionPool() {
           category: cat,
           type: 'image->name',
           name: it.name,
-          image: it.image,
+          image: it.images,
           sourceItem: it
         });
       }
@@ -331,12 +343,16 @@ function renderQuestion(q, index, total) {
     // present image options (up to MAX_OPTIONS images)
     const candidates = getItemsWithImages(q.category);
     const shuffled = shuffleArray(candidates);
-    const choices = shuffled.slice(0, MAX_OPTIONS).map(it => ({ label: it.name, image: it.image }));
-    if (!choices.find(c => c.image === q.correctImage)) {
+    const choices = shuffled.slice(0, MAX_OPTIONS).map(it => ({ label: it.name, image: randomFrom(it.images) }));
+    const correctImage = randomFrom(correctImages);
+
+    // Ensure correct image is present
+    if (!choices.find(c => c.image === correctImage)) {
+
       if (choices.length < MAX_OPTIONS) {
-        choices.push({ label: q.sourceItem.name, image: q.correctImage });
+        choices.push({ label: q.sourceItem.name, image: correctImage });
       } else {
-        choices[0] = { label: q.sourceItem.name, image: q.correctImage };
+        choices[0] = { label: q.sourceItem.name, image: correctImage };
       }
     }
     const final = shuffleArray(choices);
@@ -359,7 +375,7 @@ function renderQuestion(q, index, total) {
   } else if (q.type === 'image->name') {
     // Show large image in the question area and textual choices below
     el.questionText.textContent = `Which ${q.category} is shown?`;
-    el.questionImage.src = q.image;
+    el.questionImage.src = randomFrom(q.images);
     el.questionImage.alt = q.name || 'quiz image';
     el.questionImage.classList.remove('hidden');
 
