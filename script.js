@@ -71,6 +71,14 @@ function buildCategoryCheckboxes(categories) {
   });
 }
 
+function getRandomImage(entry) {
+  if (entry.images) {
+    return entry.images[Math.floor(Math.random() * entry.images.length)];
+  }
+  return entry.image; // fallback for old format
+}
+
+
 // Start Quiz
 function startQuiz() {
   selectedCategories = Array.from(el.categories.querySelectorAll('input:checked')).map(i => i.dataset.cat);
@@ -159,7 +167,7 @@ function buildQuestionPool() {
 
     // collect property keys (exclude name and image)
     const sample = items[0];
-    const allProps = Array.from(new Set(Object.keys(sample).filter(k => k !== 'name' && k !== 'image')));
+    const allProps = Array.from(new Set(Object.keys(sample).filter(k => k !== 'name' && k !== 'image' && k !== 'images')));
 
     // Build frequency maps for single property values
     const propValueMap = {}; // prop -> value -> [items...]
@@ -235,7 +243,7 @@ function buildQuestionPool() {
           category: cat,
           type: 'name->image',
           name: it.name,
-          correctImage: it.image,
+          correctImage: getRandomImage(it),
           sourceItem: it
         });
       }
@@ -249,7 +257,7 @@ function buildQuestionPool() {
           category: cat,
           type: 'image->name',
           name: it.name,
-          image: it.image,
+          image: getRandomImage(it),
           sourceItem: it
         });
       }
@@ -327,26 +335,38 @@ function renderQuestion(q, index, total) {
     const choices = pickNameChoices(q.category, correct, MAX_OPTIONS);
     buildOptionsAndHook(choices, correct, {q});
   } else if (q.type === 'name->image') {
-    el.questionText.textContent = `Which image shows ${q.name}?`;
-    // present image options (up to MAX_OPTIONS images)
-    const candidates = getItemsWithImages(q.category);
-    const shuffled = shuffleArray(candidates);
-    const choices = shuffled.slice(0, MAX_OPTIONS).map(it => ({ label: it.name, image: it.image }));
-    if (!choices.find(c => c.image === q.correctImage)) {
-      if (choices.length < MAX_OPTIONS) {
-        choices.push({ label: q.sourceItem.name, image: q.correctImage });
-      } else {
-        choices[0] = { label: q.sourceItem.name, image: q.correctImage };
-      }
-    }
-    const final = shuffleArray(choices);
-    // render image options as radio with thumbnails and no visible name (alt provides the name)
-    el.answersForm.innerHTML = final.map((c, idx) => `
-      <label class="answer-option" style="display:inline-block; margin:6px; text-align:center;">
-        <input type="radio" name="answer" value="${escapeAttr(c.label)}" aria-label="${escapeAttr(c.label)}" />
-        <img src="${escapeAttr(c.image)}" alt="${escapeAttr(c.label)}" style="display:block; max-width:120px; max-height:90px; margin-top:6px; border-radius:6px; border:1px solid #eef2ff;" />
-      </label>
-    `).join('');
+  el.questionText.textContent = `Which image shows ${q.name}?`;
+
+  // Get candidates that have images, but exclude same-name duplicates
+  const candidates = getItemsWithImages(q.category)
+    .filter(it => it.name !== q.name);
+
+  const shuffled = shuffleArray(candidates).slice(0, MAX_OPTIONS - 1);
+
+  // Build distractor image choices using random images
+  const choices = shuffled.map(it => ({
+    label: it.name,
+    image: getRandomImage(it)  // NEW
+  }));
+
+  // Insert the correct choice
+  choices.push({
+    label: q.sourceItem.name,
+    image: q.correctImage
+  });
+
+  // Shuffle so correct answer isn't last
+  const final = shuffleArray(choices);
+
+  // Render image options
+  el.answersForm.innerHTML = final.map(c => `
+    <label class="answer-option" style="display:inline-block; margin:6px; text-align:center;">
+      <input type="radio" name="answer" value="${escapeAttr(c.label)}" aria-label="${escapeAttr(c.label)}" />
+      <img src="${escapeAttr(c.image)}" alt="${escapeAttr(c.label)}"
+           style="display:block; max-width:120px; max-height:90px; margin-top:6px;
+                  border-radius:6px; border:1px solid #eef2ff;" />
+    </label>
+  `).join('');
     hookSubmit((selected) => {
       const chosen = selected;
       const correctName = q.name;
