@@ -482,7 +482,15 @@
     },
     {
       "name": "hersenen",
+      "image": "images/zw_perikaryon.png"
+    },
+    {
+      "name": "bloedvat",
       "image": "images/zw_bloedvat.png"
+    },
+    {
+      "name": "nucleus",
+      "images": ["images/zw_nucleus.png", "images/zw_nucleolus.png"]
     }
   ]
 }
