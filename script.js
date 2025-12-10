@@ -101,6 +101,11 @@ function startQuiz() {
   nextQuestion();
 }
 
+function randomFrom(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) return undefined;
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 // End session and return to setup
 function endSession() {
   document.getElementById('setup').classList.remove('hidden');
@@ -340,36 +345,51 @@ function renderQuestion(q, index, total) {
     buildOptionsAndHook(choices, correct, {q});
   } else if (q.type === 'name->image') {
     el.questionText.textContent = `Which image shows ${q.name}?`;
-    // present image options (up to MAX_OPTIONS images)
+
+    // Candidates are items that have images
     const candidates = getItemsWithImages(q.category);
     const shuffled = shuffleArray(candidates);
-    const choices = shuffled.slice(0, MAX_OPTIONS).map(it => ({ label: it.name, image: randomFrom(it.images) }));
-    const correctImage = randomFrom(correctImages);
 
-    // Ensure correct image is present
+    // Choose up to MAX_OPTIONS candidate items and pick one random image per item
+    const choices = shuffled.slice(0, MAX_OPTIONS).map(it => ({
+      label: it.name,
+      image: randomFrom(it.images),
+      sourceItem: it
+    }));
+
+    // Ensure the correct item is present and use one random image of the correct item
+    const correctImage = randomFrom(q.correctImages || q.images || q.sourceItem?.images || []);
+    q.correctImageUsed = correctImage; // store which image we actually used
+
+    // If the correct image wasn't included yet, put it into the choices (replace first if full)
     if (!choices.find(c => c.image === correctImage)) {
-
       if (choices.length < MAX_OPTIONS) {
-        choices.push({ label: q.sourceItem.name, image: correctImage });
+        choices.push({ label: q.sourceItem.name, image: correctImage, sourceItem: q.sourceItem });
       } else {
-        choices[0] = { label: q.sourceItem.name, image: correctImage };
+        // replace a random index (0..MAX_OPTIONS-1) to avoid always replacing index 0
+        const idx = Math.floor(Math.random() * choices.length);
+        choices[idx] = { label: q.sourceItem.name, image: correctImage, sourceItem: q.sourceItem };
       }
     }
+
     const final = shuffleArray(choices);
-    // render image options as radio with thumbnails and no visible name (alt provides the name)
-    el.answersForm.innerHTML = final.map((c, idx) => `
+
+    // Render: value must be the item name (label) so scoring compares names, and image src is the image path
+    el.answersForm.innerHTML = final.map((c) => `
       <label class="answer-option" style="display:inline-block; margin:6px; text-align:center;">
         <input type="radio" name="answer" value="${escapeAttr(c.label)}" aria-label="${escapeAttr(c.label)}" />
         <img src="${escapeAttr(c.image)}" alt="${escapeAttr(c.label)}" style="display:block; max-width:120px; max-height:90px; margin-top:6px; border-radius:6px; border:1px solid #eef2ff;" />
       </label>
     `).join('');
+
+    // Hook submit: compare chosen name to q.name (the correct item name)
     hookSubmit((selected) => {
-      const chosen = selected;
+      const chosenName = selected;
       const correctName = q.name;
-      if (chosen === correctName) {
+      if (chosenName === correctName) {
         handleCorrect();
       } else {
-        handleWrong(` you selected “${escapeHtml(chosen)}”.`);
+        handleWrong(` you selected “${escapeHtml(chosenName)}”. The correct image for ${correctName} was “${q.correctImageUsed}”.`);
       }
     });
   } else if (q.type === 'image->name') {
@@ -531,7 +551,7 @@ function pickPropertyChoices(category, property, correctValue, count=4) {
 }
 
 function getItemsWithImages(category) {
-  return (rawData[category] || []).filter(it => it.image);
+  return (rawData[category] || []).filter(it => Array.isArray(it.images) && it.images.length > 0);
 }
 
 // helpers
