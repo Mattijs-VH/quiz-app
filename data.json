@@ -474,23 +474,5 @@
       "name": "Gladde spier: overlangs doorgesneden",
       "image": "images/zw_glad-spier-overl.png"
     }
-  ],
-  "Test" : [
-    {
-      "name": "ruggenmerg",
-      "images": ["images/zw_spin-ganglion.png", "images/zw_skeletspier.png", "images/zw_proc-spin.png"]
-    },
-    {
-      "name": "hersenen",
-      "image": "images/zw_perikaryon.png"
-    },
-    {
-      "name": "bloedvat",
-      "image": "images/zw_bloedvat.png"
-    },
-    {
-      "name": "nucleus",
-      "images": ["images/zw_nucleus.png", "images/zw_nucleolus.png"]
-    }
   ]
 }
