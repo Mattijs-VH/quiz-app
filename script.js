@@ -71,10 +71,6 @@ function buildCategoryCheckboxes(categories) {
   });
 }
 
-function randomFrom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
 // Start Quiz
 function startQuiz() {
   selectedCategories = Array.from(el.categories.querySelectorAll('input:checked')).map(i => i.dataset.cat);
@@ -99,11 +95,6 @@ function startQuiz() {
   el.quizArea.classList.remove('hidden');
   document.getElementById('setup').classList.add('hidden');
   nextQuestion();
-}
-
-function randomFrom(arr) {
-  if (!Array.isArray(arr) || arr.length === 0) return undefined;
-  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 // End session and return to setup
@@ -164,14 +155,6 @@ function buildQuestionPool() {
   for (const cat of Object.keys(rawData)) {
     if (selectedCategories.length && !selectedCategories.includes(cat)) continue;
     const items = rawData[cat] || [];
-    for (const it of items) {
-    if (Array.isArray(it.images)) continue;
-    if (it.image) {
-      it.images = [it.image];
-      } else {
-      it.images = []; // no images
-      }
-    }
     if (!Array.isArray(items) || items.length === 0) continue;
 
     // collect property keys (exclude name and image)
@@ -242,7 +225,7 @@ function buildQuestionPool() {
     }
 
     // Image-based questions
-    const itemsWithImages = items.filter(i => i.images && i.images.length > 0);
+    const itemsWithImages = items.filter(i => i.image);
     console.debug(`buildQuestionPool: category=${cat} itemsWithImages=${itemsWithImages.length}`);
 
     // create name->image entries (show name, choose image)
@@ -252,7 +235,7 @@ function buildQuestionPool() {
           category: cat,
           type: 'name->image',
           name: it.name,
-          correctImage: it.images,
+          correctImage: it.image,
           sourceItem: it
         });
       }
@@ -266,7 +249,7 @@ function buildQuestionPool() {
           category: cat,
           type: 'image->name',
           name: it.name,
-          image: it.images,
+          image: it.image,
           sourceItem: it
         });
       }
@@ -345,57 +328,38 @@ function renderQuestion(q, index, total) {
     buildOptionsAndHook(choices, correct, {q});
   } else if (q.type === 'name->image') {
     el.questionText.textContent = `Which image shows ${q.name}?`;
-
-    // Candidates are items that have images
+    // present image options (up to MAX_OPTIONS images)
     const candidates = getItemsWithImages(q.category);
     const shuffled = shuffleArray(candidates);
-
-    // Choose up to MAX_OPTIONS candidate items and pick one random image per item
-    const choices = shuffled.slice(0, MAX_OPTIONS).map(it => ({
-      label: it.name,
-      image: randomFrom(it.images),
-      sourceItem: it
-    }));
-
-    // Ensure the correct item is present and use one random image of the correct item
-    const correctImage = randomFrom(q.correctImages || q.images || q.sourceItem?.images || []);
-    q.correctImageUsed = correctImage; // store which image we actually used
-
-    // If the correct image wasn't included yet, put it into the choices (replace first if full)
-    if (!choices.find(c => c.image === correctImage)) {
+    const choices = shuffled.slice(0, MAX_OPTIONS).map(it => ({ label: it.name, image: it.image }));
+    if (!choices.find(c => c.image === q.correctImage)) {
       if (choices.length < MAX_OPTIONS) {
-        choices.push({ label: q.sourceItem.name, image: correctImage, sourceItem: q.sourceItem });
+        choices.push({ label: q.sourceItem.name, image: q.correctImage });
       } else {
-        // replace a random index (0..MAX_OPTIONS-1) to avoid always replacing index 0
-        const idx = Math.floor(Math.random() * choices.length);
-        choices[idx] = { label: q.sourceItem.name, image: correctImage, sourceItem: q.sourceItem };
+        choices[0] = { label: q.sourceItem.name, image: q.correctImage };
       }
     }
-
     const final = shuffleArray(choices);
-
-    // Render: value must be the item name (label) so scoring compares names, and image src is the image path
-    el.answersForm.innerHTML = final.map((c) => `
+    // render image options as radio with thumbnails and no visible name (alt provides the name)
+    el.answersForm.innerHTML = final.map((c, idx) => `
       <label class="answer-option" style="display:inline-block; margin:6px; text-align:center;">
         <input type="radio" name="answer" value="${escapeAttr(c.label)}" aria-label="${escapeAttr(c.label)}" />
         <img src="${escapeAttr(c.image)}" alt="${escapeAttr(c.label)}" style="display:block; max-width:120px; max-height:90px; margin-top:6px; border-radius:6px; border:1px solid #eef2ff;" />
       </label>
     `).join('');
-
-    // Hook submit: compare chosen name to q.name (the correct item name)
     hookSubmit((selected) => {
-      const chosenName = selected;
+      const chosen = selected;
       const correctName = q.name;
-      if (chosenName === correctName) {
+      if (chosen === correctName) {
         handleCorrect();
       } else {
-        handleWrong(` you selected “${escapeHtml(chosenName)}”. The correct image for ${correctName} was “${q.correctImageUsed}”.`);
+        handleWrong(` you selected “${escapeHtml(chosen)}”.`);
       }
     });
   } else if (q.type === 'image->name') {
     // Show large image in the question area and textual choices below
     el.questionText.textContent = `Which ${q.category} is shown?`;
-    el.questionImage.src = randomFrom(q.images);
+    el.questionImage.src = q.image;
     el.questionImage.alt = q.name || 'quiz image';
     el.questionImage.classList.remove('hidden');
 
@@ -551,7 +515,7 @@ function pickPropertyChoices(category, property, correctValue, count=4) {
 }
 
 function getItemsWithImages(category) {
-  return (rawData[category] || []).filter(it => Array.isArray(it.images) && it.images.length > 0);
+  return (rawData[category] || []).filter(it => it.image);
 }
 
 // helpers
