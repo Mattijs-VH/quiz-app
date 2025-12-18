@@ -474,5 +474,699 @@
       "name": "Gladde spier: overlangs doorgesneden",
       "image": "images/zw_glad-spier-overl.png"
     }
+  ],
+  "Biologie - skelet + vlakken": [
+    {
+      "name": "Richting: anterieur",
+      "image": "images/anterieur.png"
+    },
+    {
+      "name": "Richting: caudaal",
+      "image": "images/caudaal.png"
+    },
+    {
+      "name": "Richting: craniaal",
+      "image": "images/craniaal.png"
+    },
+    {
+      "name": "Richting: distaal",
+      "image": "images/distaal.png"
+    },
+    {
+      "name": "Richting: dorsaal",
+      "image": "images/dorsaal.png"
+    },
+    {
+      "name": "Vlak: frontaal",
+      "image": "images/frontaal.png"
+    },
+    {
+      "name": "Richting: inferieur",
+      "image": "images/inferior.png"
+    },
+    {
+      "name": "Richting: lateraal",
+      "image": "images/lateraal.png"
+    },
+    {
+      "name": "Richting: mediaal",
+      "image": "images/mediaal.png"
+    },
+    {
+      "name": "Richting: posterieur",
+      "image": "images/posterieur.png"
+    },
+    {
+      "name": "Richting: proximaal",
+      "image": "images/proximaal.png"
+    },
+    {
+      "name": "Vlak: sagittaal",
+      "image": "images/sagittaal.png"
+    },
+    {
+      "name": "Acromion",
+      "image": "images/skelet_acromion.png"
+    },
+    {
+      "name": "Arcus vertebrae",
+      "image": "images/skelet_arcus_vertebrae.png"
+    },
+    {
+      "name": "C1: Atlas",
+      "image": "images/skelet_atlas.png"
+    },
+    {
+      "name": "Axiaal skelet",
+      "image": "images/skelet_axiaal.png"
+    },
+    {
+      "name": "C2: Axis",
+      "image": "images/skelet_axis.png"
+    },
+    {
+      "name": "Ossa carpi",
+      "image": "images/skelet_carpi.png"
+    },
+    {
+      "name": "Clavicula",
+      "image": "images/skelet_clavicula.png"
+    },
+    {
+      "name": "Corpus scapulae",
+      "image": "images/skelet_corpus_scapulae.png"
+    },
+    {
+      "name": "Corpus vertebrae",
+      "image": "images/skelet_corpus_vertebrae.png"
+    },
+    {
+      "name": "Costa fluctuantes",
+      "image": "images/skelet_costa_fluctuantes.png"
+    },
+    {
+      "name": "Costa spuriae",
+      "image": "images/skelet_costa_spuriae.png"
+    },
+    {
+      "name": "Costa vera",
+      "image": "images/skelet_costa_vera.png"
+    },
+    {
+      "name": "Os coxae",
+      "image": "images/skelet_coxae.png"
+    },
+    {
+      "name": "Femur",
+      "image": "images/skelet_femur.png"
+    },
+    {
+      "name": "Fibula",
+      "image": "images/skelet_fibula.png"
+    },
+    {
+      "name": "Foramen vertebrale",
+      "image": "images/skelet_foramen_vertebrale.png"
+    },
+    {
+      "name": "Humerus",
+      "image": "images/skelet_humerus.png"
+    },
+    {
+      "name": "Hyoideum",
+      "image": "images/skelet_hyoideum.png"
+    },
+    {
+      "name": "Illium",
+      "image": "images/skelet_illium.png"
+    },
+    {
+      "name": "Incus",
+      "image": "images/skelet_incus.png"
+    },
+    {
+      "name": "Ischium",
+      "image": "images/skelet_ischium.png"
+    },
+    {
+      "name": "Kromming: kyfose",
+      "image": "images/skelet_kyfose.png"
+    },
+    {
+      "name": "Kromming: Lordose",
+      "image": "images/skelet_lordose.png"
+    },
+    {
+      "name": "Malleus",
+      "image": "images/skelet_malleus.png"
+    },
+    {
+      "name": "Ossa metacarpi",
+      "image": "images/skelet_metacarpi.png"
+    },
+    {
+      "name": "Ossa metatarsi",
+      "image": "images/skelet_metatarsi.png"
+    },
+    {
+      "name": "Olecranon",
+      "image": "images/skelet_olecranon.png"
+    },
+    {
+      "name": "Patella",
+      "image": "images/skelet_patella.png"
+    },
+    {
+      "name": "Phalanges distales",
+      "image": "images/skelet_phalanges_distales.png"
+    },
+    {
+      "name": "Phalanges mediales",
+      "image": "images/skelet_phalanges_mediales.png"
+    },
+    {
+      "name": "Phalanges pedis",
+      "image": "images/skelet_phalanges_pedis.png"
+    },
+    {
+      "name": "Phalanges proximales",
+      "image": "images/skelet_phalanges_proximales.png"
+    },
+    {
+      "name": "Processus articulares inferior",
+      "image": "images/skelet_processus_articulares_inferior.png"
+    },
+    {
+      "name": "processus articulares superior",
+      "image": "images/skelet_processus_articulares_superior.png"
+    },
+    {
+      "name": "Processus coracoideus",
+      "image": "images/skelet_processus_coracoideus.png"
+    },
+    {
+      "name": "Processus Spinosus",
+      "image": "images/skelet_processus_spinosus.png"
+    },
+    {
+      "name": "Processus styloideus radii",
+      "image": "images/skelet_processus_styloideus_radii.png"
+    },
+    {
+      "name": "Processus styloideus ulnae",
+      "image": "images/skelet_processus_styloideus_ulnae.png"
+    },
+    {
+      "name": "Processus transversus",
+      "image": "images/skelet_processus_transversus.png"
+    },
+    {
+      "name": "Pubis",
+      "image": "images/skelet_pubis.png"
+    },
+    {
+      "name": "Radius",
+      "image": "images/skelet_radius.png"
+    },
+    {
+      "name": "Scapula",
+      "image": "images/skelet_scapula.png"
+    },
+    {
+      "name": "Concha nasalis",
+      "image": "images/skelet_schedel_concha_nasalis.png"
+    },
+    {
+      "name": "Ethmoidale",
+      "image": "images/skelet_schedel_ethmoidale.png"
+    },
+    {
+      "name": "Foramen magnum",
+      "image": "images/skelet_schedel_foramen_magnum.png"
+    },
+    {
+      "name": "Frontale",
+      "image": "images/skelet_schedel_frontale.png"
+    },
+    {
+      "name": "Lacrimale",
+      "image": "images/skelet_schedel_lacrimale.png"
+    },
+    {
+      "name": "Mandibula",
+      "image": "images/skelet_schedel_mandibula.png"
+    },
+    {
+      "name": "Maxilla",
+      "image": "images/skelet_schedel_maxilla.png"
+    },
+    {
+      "name": "Nasale",
+      "image": "images/skelet_schedel_nasale.png"
+    },
+    {
+      "name": "Occipitale",
+      "image": "images/skelet_schedel_occipitale.png"
+    },
+    {
+      "name": "Palatinum",
+      "image": "images/skelet_schedel_palatinum.png"
+    },
+    {
+      "name": "Parietale",
+      "image": "images/skelet_schedel_parietale.png"
+    },
+    {
+      "name": "Sphenoidale",
+      "image": "images/skelet_schedel_sphenoidale.png"
+    },
+    {
+      "name": "Temporale",
+      "image": "images/skelet_schedel_temporale.png"
+    },
+    {
+      "name": "Vomer",
+      "image": "images/skelet_schedel_vomer.png"
+    },
+    {
+      "name": "Zygomaticum",
+      "image": "images/skelet_schedel_zygomaticum.png"
+    },
+    {
+      "name": "Spina scapulae",
+      "image": "images/skelet_spina_scapulae.png"
+    },
+    {
+      "name": "Stapes",
+      "image": "images/skelet_stapes.png"
+    },
+    {
+      "name": "Sternum",
+      "image": "images/skelet_sternum.png"
+    },
+    {
+      "name": "Sutura coronalis",
+      "image": "images/skelet_sutura_coronalis.png"
+    },
+    {
+      "name": "Sutura sagittalis",
+      "image": "images/skelet_sutura_sagittalis.png"
+    },
+    {
+      "name": "Ossa tarsi",
+      "image": "images/skelet_tarsi.png"
+    },
+    {
+      "name": "Tibia",
+      "image": "images/skelet_tibia.png"
+    },
+    {
+      "name": "Ulna",
+      "image": "images/skelet_ulna.png"
+    },
+    {
+      "name": "Vertebrae cervicales",
+      "aantal wervels": "7",
+      "image": "images/skelet_vertebrae_cervicales.png"
+    },
+    {
+      "name": "Vertebrae coccygae",
+      "aantal wervels": "1",
+      "image": "images/skelet_vertebrae_coccygae.png"
+    },
+    {
+      "name": "Vertebrae lumbales",
+      "aantal wervels": "5",
+      "image": "images/skelet_vertebrae_lumbales.png"
+    },
+    {
+      "name": "Vertebrae sacrales",
+      "aantal wervels": "1",
+      "image": "images/skelet_vertebrae_sacrales.png"
+    },
+    {
+      "name": "Vertebrae thoracales",
+      "aantal wervels": "12",
+      "image": "images/skelet_vertebrae_thoracales.png"
+    },
+    {
+      "name": "Richting: superior",
+      "image": "images/superior.png"
+    },
+    {
+      "name": "Vlak: transversaal",
+      "image": "images/transversaal.png"
+    },
+    {
+      "name": "Richting: ventraal",
+      "image": "images/ventraal.png"
+    }
+  ],
+  "Biologie - skelet + vlakken + NL": [
+    {
+      "name": "Richting: anterieur",
+      "image": "images/anterieur.png"
+    },
+    {
+      "name": "Richting: caudaal",
+      "image": "images/caudaal.png"
+    },
+    {
+      "name": "Richting: craniaal",
+      "image": "images/craniaal.png"
+    },
+    {
+      "name": "Richting: distaal",
+      "image": "images/distaal.png"
+    },
+    {
+      "name": "Richting: dorsaal",
+      "image": "images/dorsaal.png"
+    },
+    {
+      "name": "Vlak: frontaal",
+      "image": "images/frontaal.png"
+    },
+    {
+      "name": "Richting: inferieur",
+      "image": "images/inferior.png"
+    },
+    {
+      "name": "Richting: lateraal",
+      "image": "images/lateraal.png"
+    },
+    {
+      "name": "Richting: mediaal",
+      "image": "images/mediaal.png"
+    },
+    {
+      "name": "Richting: posterieur",
+      "image": "images/posterieur.png"
+    },
+    {
+      "name": "Richting: proximaal",
+      "image": "images/proximaal.png"
+    },
+    {
+      "name": "Vlak: sagittaal",
+      "image": "images/sagittaal.png"
+    },
+    {
+      "name": "Acromion",
+      "image": "images/skelet_acromion.png"
+    },
+    {
+      "name": "Arcus vertebrae // wervelboog",
+      "image": "images/skelet_arcus_vertebrae.png"
+    },
+    {
+      "name": "C1: Atlas",
+      "image": "images/skelet_atlas.png"
+    },
+    {
+      "name": "Axiaal skelet",
+      "image": "images/skelet_axiaal.png"
+    },
+    {
+      "name": "C2: Axis",
+      "image": "images/skelet_axis.png"
+    },
+    {
+      "name": "Ossa carpi // handwortelbeentjes",
+      "image": "images/skelet_carpi.png"
+    },
+    {
+      "name": "Clavicula // sleutelbeen",
+      "image": "images/skelet_clavicula.png"
+    },
+    {
+      "name": "Corpus scapulae",
+      "image": "images/skelet_corpus_scapulae.png"
+    },
+    {
+      "name": "Corpus vertebrae // wervellichaam",
+      "image": "images/skelet_corpus_vertebrae.png"
+    },
+    {
+      "name": "Costa fluctuantes // zwevende ribben",
+      "image": "images/skelet_costa_fluctuantes.png"
+    },
+    {
+      "name": "Costa spuriae // valse ribben",
+      "image": "images/skelet_costa_spuriae.png"
+    },
+    {
+      "name": "Costa vera // echte ribben",
+      "image": "images/skelet_costa_vera.png"
+    },
+    {
+      "name": "Os coxae // heupbeen",
+      "image": "images/skelet_coxae.png"
+    },
+    {
+      "name": "Femur // dijbeen",
+      "image": "images/skelet_femur.png"
+    },
+    {
+      "name": "Fibula // kuitbeen",
+      "image": "images/skelet_fibula.png"
+    },
+    {
+      "name": "Foramen vertebrale // wervelgat",
+      "image": "images/skelet_foramen_vertebrale.png"
+    },
+    {
+      "name": "Humerus // bovenarmbeen",
+      "image": "images/skelet_humerus.png"
+    },
+    {
+      "name": "Hyoideum // tongbeen",
+      "image": "images/skelet_hyoideum.png"
+    },
+    {
+      "name": "Illium",
+      "image": "images/skelet_illium.png"
+    },
+    {
+      "name": "Incus // aambeeld",
+      "image": "images/skelet_incus.png"
+    },
+    {
+      "name": "Ischium",
+      "image": "images/skelet_ischium.png"
+    },
+    {
+      "name": "Kromming: kyfose",
+      "image": "images/skelet_kyfose.png"
+    },
+    {
+      "name": "Kromming: Lordose",
+      "image": "images/skelet_lordose.png"
+    },
+    {
+      "name": "Malleus // hamer",
+      "image": "images/skelet_malleus.png"
+    },
+    {
+      "name": "Ossa metacarpi // middenhandbeentjes",
+      "image": "images/skelet_metacarpi.png"
+    },
+    {
+      "name": "Ossa metatarsi // middenvoetbeentjes",
+      "image": "images/skelet_metatarsi.png"
+    },
+    {
+      "name": "Olecranon // elleboogpunt",
+      "image": "images/skelet_olecranon.png"
+    },
+    {
+      "name": "Patella // knieschijf",
+      "image": "images/skelet_patella.png"
+    },
+    {
+      "name": "Phalanges distales // eindkootjes",
+      "image": "images/skelet_phalanges_distales.png"
+    },
+    {
+      "name": "Phalanges mediales // middelste kootjes",
+      "image": "images/skelet_phalanges_mediales.png"
+    },
+    {
+      "name": "Phalanges pedis // teenkootjes",
+      "image": "images/skelet_phalanges_pedis.png"
+    },
+    {
+      "name": "Phalanges proximales // basiskootjes",
+      "image": "images/skelet_phalanges_proximales.png"
+    },
+    {
+      "name": "Processus articulares inferior // onderste gewrichtsuitsteeksel",
+      "image": "images/skelet_processus_articulares_inferior.png"
+    },
+    {
+      "name": "processus articulares superior // bovenste gewrichtsuitsteeksel",
+      "image": "images/skelet_processus_articulares_superior.png"
+    },
+    {
+      "name": "Processus coracoideus",
+      "image": "images/skelet_processus_coracoideus.png"
+    },
+    {
+      "name": "Processus Spinosus // doornuitsteeksel",
+      "image": "images/skelet_processus_spinosus.png"
+    },
+    {
+      "name": "Processus styloideus radii",
+      "image": "images/skelet_processus_styloideus_radii.png"
+    },
+    {
+      "name": "Processus styloideus ulnae",
+      "image": "images/skelet_processus_styloideus_ulnae.png"
+    },
+    {
+      "name": "Processus transversus // dwarsuitsteeksel",
+      "image": "images/skelet_processus_transversus.png"
+    },
+    {
+      "name": "Pubis",
+      "image": "images/skelet_pubis.png"
+    },
+    {
+      "name": "Radius // spaakbeen",
+      "image": "images/skelet_radius.png"
+    },
+    {
+      "name": "Scapula // schouder",
+      "image": "images/skelet_scapula.png"
+    },
+    {
+      "name": "Concha nasalis // neusschelp",
+      "image": "images/skelet_schedel_concha_nasalis.png"
+    },
+    {
+      "name": "Ethmoidale // zeefbeen",
+      "image": "images/skelet_schedel_ethmoidale.png"
+    },
+    {
+      "name": "Foramen magnum // achterhoofdsgat",
+      "image": "images/skelet_schedel_foramen_magnum.png"
+    },
+    {
+      "name": "Frontale // voorhoofdsbeen",
+      "image": "images/skelet_schedel_frontale.png"
+    },
+    {
+      "name": "Lacrimale // traanbeen",
+      "image": "images/skelet_schedel_lacrimale.png"
+    },
+    {
+      "name": "Mandibula // onderkaakbeen",
+      "image": "images/skelet_schedel_mandibula.png"
+    },
+    {
+      "name": "Maxilla // bovenkaakbeen",
+      "image": "images/skelet_schedel_maxilla.png"
+    },
+    {
+      "name": "Nasale // neusbeen",
+      "image": "images/skelet_schedel_nasale.png"
+    },
+    {
+      "name": "Occipitale // achterhoofdbeen",
+      "image": "images/skelet_schedel_occipitale.png"
+    },
+    {
+      "name": "Palatinum // verhemeltebeen",
+      "image": "images/skelet_schedel_palatinum.png"
+    },
+    {
+      "name": "Parietale // wandbeen",
+      "image": "images/skelet_schedel_parietale.png"
+    },
+    {
+      "name": "Sphenoidale // wiggenbeen",
+      "image": "images/skelet_schedel_sphenoidale.png"
+    },
+    {
+      "name": "Temporale // slaapbeen",
+      "image": "images/skelet_schedel_temporale.png"
+    },
+    {
+      "name": "Vomer // ploegschaarbeen",
+      "image": "images/skelet_schedel_vomer.png"
+    },
+    {
+      "name": "Zygomaticum // jukbeen",
+      "image": "images/skelet_schedel_zygomaticum.png"
+    },
+    {
+      "name": "Spina scapulae",
+      "image": "images/skelet_spina_scapulae.png"
+    },
+    {
+      "name": "Stapes // stijgbeugel",
+      "image": "images/skelet_stapes.png"
+    },
+    {
+      "name": "Sternum // borstbeen",
+      "image": "images/skelet_sternum.png"
+    },
+    {
+      "name": "Sutura coronalis // kroonnaad",
+      "image": "images/skelet_sutura_coronalis.png"
+    },
+    {
+      "name": "Sutura sagittalis // sagittale naad",
+      "image": "images/skelet_sutura_sagittalis.png"
+    },
+    {
+      "name": "Ossa tarsi // voetwortelbeentjes",
+      "image": "images/skelet_tarsi.png"
+    },
+    {
+      "name": "Tibia // scheenbeen",
+      "image": "images/skelet_tibia.png"
+    },
+    {
+      "name": "Ulna // ellepijp/onderarmbeen",
+      "image": "images/skelet_ulna.png"
+    },
+    {
+      "name": "Vertebrae cervicales // halswervels",
+      "aantal wervels": "7",
+      "image": "images/skelet_vertebrae_cervicales.png"
+    },
+    {
+      "name": "Vertebrae coccygae // staartbeen",
+      "aantal wervels": "1",
+      "image": "images/skelet_vertebrae_coccygae.png"
+    },
+    {
+      "name": "Vertebrae lumbales // lendenwervels",
+      "aantal wervels": "5",
+      "image": "images/skelet_vertebrae_lumbales.png"
+    },
+    {
+      "name": "Vertebrae sacrales // heiligbeen",
+      "aantal wervels": "1",
+      "image": "images/skelet_vertebrae_sacrales.png"
+    },
+    {
+      "name": "Vertebrae thoracales // borstwervels",
+      "aantal wervels": "12",
+      "image": "images/skelet_vertebrae_thoracales.png"
+    },
+    {
+      "name": "Richting: superior",
+      "image": "images/superior.png"
+    },
+    {
+      "name": "Vlak: transversaal",
+      "image": "images/transversaal.png"
+    },
+    {
+      "name": "Richting: ventraal",
+      "image": "images/ventraal.png"
+    }
   ]
 }
