@@ -1169,4 +1169,26 @@
       "image": "images/ventraal.png"
     }
   ]
+  "test": [
+     {
+      "name": "wervels",
+      "images": [
+        "images/skelet_vertebrae_thoracales.png",
+        "images/skelet_vertebrae_cervicales.png",
+        "images/skelet_vertebrae_lumbales.png"
+      ]
+    },
+    {
+      "name": "Richting: superior",
+      "image": "images/superior.png"
+    },
+    {
+      "name": "Vlak: transversaal",
+      "image": "images/transversaal.png"
+    },
+    {
+      "name": "Richting: ventraal",
+      "image": "images/ventraal.png"
+    }
+  ]
 }
