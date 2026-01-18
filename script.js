@@ -11,7 +11,7 @@
 const DATA_PATH = 'data.json';
 const MAX_OPTIONS = 4;
 // Probability that a "name" answer question will ask for typed input instead of multiple-choice (0..1)
-const TYPED_ANSWER_PROB = 0.25;
+const TYPED_ANSWER_PROB = 0.5;
 
 // ------------------------------------------------------------
 //  GLOBAL STATE
