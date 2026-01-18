@@ -3,10 +3,13 @@
 //  Supports multi-image items with random selection per question
 //  Fully backward compatible with "image" fields
 //  No HTML/CSS changes required
+//  Added: optional typed-answer mode for "name" answers (case-insensitive)
 // ============================================================
 
 const DATA_PATH = 'data.json';
 const MAX_OPTIONS = 4;
+// Probability that a "name" answer question will ask for typed input instead of multiple-choice (0..1)
+const TYPED_ANSWER_PROB = 0.25;
 
 // ------------------------------------------------------------
 //  GLOBAL STATE
@@ -355,6 +358,7 @@ function finishSession() {
 // ============================================================
 //  QUIZ APP — Refactored Version (Part 2)
 //  Rendering, submit logic, scoring, utilities, zoom modal
+//  Added typed answer rendering + handling
 // ============================================================
 
 // ------------------------------------------------------------
@@ -385,6 +389,13 @@ function renderPropertyToName(q) {
   el.questionText.textContent =
     `Which ${q.category} has ${propLabel(q.property)} = "${q.value}"?`;
   const correct = q.correct;
+
+  // If we decide to ask for typed input (only for questions where the answer is a name)
+  if (shouldUseTypedEntry()) {
+    renderTypedNameQuestion(correct, { q });
+    return;
+  }
+
   const choices = pickNameChoices(q.category, correct, MAX_OPTIONS);
   buildOptionsAndHook(choices, correct, { q });
 }
@@ -406,6 +417,13 @@ function renderPropertiesToName(q) {
     `Which ${q.category} matches — ${display}?`;
 
   const correct = q.correct;
+
+  // typed entry option for name answers
+  if (shouldUseTypedEntry()) {
+    renderTypedNameQuestion(correct, { q });
+    return;
+  }
+
   const choices = pickNameChoices(q.category, correct, MAX_OPTIONS);
   buildOptionsAndHook(choices, correct, { q });
 }
@@ -470,6 +488,13 @@ function renderImageToName(q) {
   el.questionImage.classList.remove('hidden');
 
   const correct = q.name;
+
+  // typed entry option for name answers
+  if (shouldUseTypedEntry()) {
+    renderTypedNameQuestion(correct, { q });
+    return;
+  }
+
   const choices = pickNameChoicesFromImageItems(q.category, correct, MAX_OPTIONS);
   buildOptionsAndHook(choices, correct, { q });
 }
@@ -518,6 +543,43 @@ function buildOptionsAndHook(choices, correct, meta = {}) {
   });
 }
 
+// New: render a typed input for "name" answers (case-insensitive)
+function renderTypedNameQuestion(correctName, meta = {}) {
+  // simple accessible form: a text input and submit button
+  const placeholder = 'Type the name here';
+  el.answersForm.innerHTML = `
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <label style="flex:1; min-width:200px;">
+        <input
+          type="text"
+          name="typedAnswer"
+          placeholder="${escapeAttr(placeholder)}"
+          aria-label="Type your answer"
+          style="width:100%; padding:8px; border-radius:6px; border:1px solid #ddd;"
+        />
+      </label>
+    </div>
+  `;
+
+  hookTextSubmit(val => {
+    const q = meta.q;
+    const chosenRaw = val;
+    if (chosenRaw === null || chosenRaw === undefined) {
+      showToast('Pick an answer first.');
+      return;
+    }
+
+    const chosen = String(chosenRaw).trim();
+    // Compare case-insensitively (ignore capitalization)
+    if (chosen.toLowerCase() === String(correctName).trim().toLowerCase()) {
+      handleCorrect();
+    } else {
+      handleWrong(`you typed “${escapeHtml(chosen)}”.`);
+    }
+  });
+}
+
+// Existing hookSubmit for choice inputs (radios)
 function hookSubmit(onSubmit) {
   try {
     const existingBtns = el.answersForm.querySelectorAll('button.submit-btn');
@@ -564,6 +626,58 @@ function hookSubmit(onSubmit) {
     });
   } catch (err) {
     console.error('hookSubmit error', err);
+  }
+}
+
+// New: hook for typed text entry questions
+function hookTextSubmit(onSubmit) {
+  try {
+    const existingBtns = el.answersForm.querySelectorAll('button.submit-btn');
+    existingBtns.forEach(b => b.remove());
+
+    const submitBtn = document.createElement('button');
+    submitBtn.className = 'btn primary submit-btn';
+    submitBtn.type = 'button';
+    submitBtn.textContent = 'Submit';
+    submitBtn.style.marginTop = '12px';
+    submitBtn.dataset.answered = 'false';
+
+    el.answersForm.appendChild(submitBtn);
+
+    submitBtn.addEventListener('click', () => {
+      if (submitBtn.dataset.answered === 'true') {
+        nextQuestion();
+        return;
+      }
+
+      const input = el.answersForm.querySelector('input[name="typedAnswer"]');
+      if (!input) {
+        showToast('No input found.');
+        return;
+      }
+
+      const val = input.value;
+
+      if (!val || val.trim() === '') {
+        showToast('Type an answer first.');
+        return;
+      }
+
+      // disable input after answering
+      input.disabled = true;
+      submitBtn.dataset.answered = 'true';
+
+      try {
+        onSubmit(val);
+      } catch (err) {
+        console.error('onSubmit handler error', err);
+      }
+
+      submitBtn.textContent = 'Next';
+      el.nextBtn.disabled = false;
+    });
+  } catch (err) {
+    console.error('hookTextSubmit error', err);
   }
 }
 
@@ -731,6 +845,11 @@ function combinations(arr, k) {
 
   go(0, []);
   return res;
+}
+
+// Helper: decide whether to show typed entry for a name-answer question
+function shouldUseTypedEntry() {
+  return Math.random() < TYPED_ANSWER_PROB;
 }
 
 // ------------------------------------------------------------
