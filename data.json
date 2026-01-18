@@ -1,4 +1,6 @@
 {
+  "_meta": { "aminoacid": { "typed": true, "typedProbability": 0.5 }, "bacteria": { "typed": true, "typedProbability": 50 }, "microbiologie-tests": { "typed": false } },
+  
   "aminoacid": [
     {
       "name": "Alanine",
