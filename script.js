@@ -4,6 +4,7 @@
 //  Fully backward compatible with "image" fields
 //  No HTML/CSS changes required
 //  Added: optional typed-answer mode for "name" answers (case-insensitive)
+//  Fix: prevent form submit reload and handle Enter in text input
 // ============================================================
 
 const DATA_PATH = 'data.json';
@@ -65,6 +66,11 @@ async function init() {
   el.startBtn.addEventListener('click', startQuiz);
   el.nextBtn.addEventListener('click', nextQuestion);
   el.endBtn.addEventListener('click', endSession);
+
+  // Prevent the answers form from performing a full-page submit (Enter key)
+  el.answersForm.addEventListener('submit', e => {
+    e.preventDefault();
+  });
 }
 
 // ------------------------------------------------------------
@@ -644,19 +650,31 @@ function hookTextSubmit(onSubmit) {
 
     el.answersForm.appendChild(submitBtn);
 
+    // Query the input that was rendered and wire Enter to submit
+    const input = el.answersForm.querySelector('input[name="typedAnswer"]');
+    if (input) {
+      // pressing Enter triggers the same submit flow (and prevented from reloading)
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          submitBtn.click();
+        }
+      });
+    }
+
     submitBtn.addEventListener('click', () => {
       if (submitBtn.dataset.answered === 'true') {
         nextQuestion();
         return;
       }
 
-      const input = el.answersForm.querySelector('input[name="typedAnswer"]');
-      if (!input) {
+      const inputNow = el.answersForm.querySelector('input[name="typedAnswer"]');
+      if (!inputNow) {
         showToast('No input found.');
         return;
       }
 
-      const val = input.value;
+      const val = inputNow.value;
 
       if (!val || val.trim() === '') {
         showToast('Type an answer first.');
@@ -664,7 +682,7 @@ function hookTextSubmit(onSubmit) {
       }
 
       // disable input after answering
-      input.disabled = true;
+      inputNow.disabled = true;
       submitBtn.dataset.answered = 'true';
 
       try {
