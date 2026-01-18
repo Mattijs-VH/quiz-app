@@ -6,6 +6,7 @@
 //  Added: optional typed-answer mode for "name" answers (case-insensitive)
 //  Fix: prevent form submit reload and handle Enter in text input
 //  Added: per-category typed-answer metadata support and per-category % controls
+//  Update: categories not present in _meta behave as if typed: false
 // ============================================================
 
 const DATA_PATH = 'data.json';
@@ -28,6 +29,9 @@ let bestStreak = Number(localStorage.getItem('quiz_highscore') || 0);
 
 // per-category typed entry probability (values 0..1)
 const typedProbByCategory = {};
+
+// category metadata read from data._meta (or empty)
+let categoryMeta = {};
 
 // ------------------------------------------------------------
 //  DOM ELEMENTS
@@ -64,6 +68,9 @@ async function init() {
     return;
   }
 
+  // load category metadata (optional)
+  categoryMeta = rawData._meta || {};
+
   buildCategoryCheckboxes(Object.keys(rawData).filter(k => k !== '_meta'));
   el.highscore.textContent = bestStreak;
 
@@ -90,25 +97,26 @@ async function fetchJSON(path) {
 //  CATEGORY CHECKBOXES
 //  - Supports optional rawData._meta[category] = { typed: true, typedProbability: 0.3 }
 //  - When typed:true is present, a small percentage input appears next to the checkbox.
+//  - Categories not present in _meta are treated as typed: false (no control shown).
 // ------------------------------------------------------------
 function buildCategoryCheckboxes(categories) {
   el.categories.innerHTML = '';
 
-  const metaRoot = rawData._meta || {};
+  const metaRoot = categoryMeta;
 
   categories.forEach(cat => {
     const id = `cat_${cat}`;
     const wrapper = document.createElement('label');
     wrapper.className = 'category';
 
-    // Check if this category has typed-answer metadata
-    const meta = metaRoot[cat] || {};
-    const enabledForTyped = Boolean(meta.typed);
+    // Check if this category has typed-answer metadata and is enabled
+    const meta = metaRoot[cat];
+    const enabledForTyped = Boolean(meta && meta.typed);
 
-    // Determine initial percentage (0..100)
-    const initialPct = normalizeMetaProbToPct(meta.typedProbability ?? meta.typedProbability ?? meta.typedProbability, TYPED_ANSWER_PROB);
+    // Determine initial percentage (0..100). Only relevant when enabledForTyped === true
+    const initialPct = normalizeMetaProbToPct(meta && meta.typedProbability, TYPED_ANSWER_PROB);
 
-    // store initial in typedProbByCategory as fraction
+    // store initial in typedProbByCategory as fraction only if enabled
     if (enabledForTyped) {
       typedProbByCategory[cat] = pctToFraction(initialPct);
     }
@@ -207,17 +215,23 @@ function startQuiz() {
     return;
   }
 
-  // Ensure typedProbByCategory has entries for selected categories (fill with default when missing)
+  // Ensure typedProbByCategory has entries for selected categories only if categoryMeta enables it.
   selectedCategories.forEach(cat => {
-    if (typedProbByCategory[cat] === undefined) {
-      // If metadata exists and specifies a default, it should already be set during buildCategoryCheckboxes.
-      // Otherwise use the global default.
-      typedProbByCategory[cat] = TYPED_ANSWER_PROB;
-    }
-    // If there's a numeric input in the UI, prefer that value (it's already wired to update typedProbByCategory)
-    const input = el.categories.querySelector(`input.typed-prob[data-cat="${cat}"]`);
-    if (input && input.value !== '') {
-      typedProbByCategory[cat] = pctToFraction(Number(input.value));
+    const meta = categoryMeta[cat];
+    if (meta && meta.typed) {
+      // If there's a numeric input in the UI, prefer that value (it's already wired to update typedProbByCategory)
+      const input = el.categories.querySelector(`input.typed-prob[data-cat="${cat}"]`);
+      if (input && input.value !== '') {
+        typedProbByCategory[cat] = pctToFraction(Number(input.value));
+      } else if (typedProbByCategory[cat] === undefined) {
+        // fall back to meta specified probability or global
+        typedProbByCategory[cat] = (typeof meta.typedProbability === 'number')
+          ? (meta.typedProbability > 1 ? pctToFraction(meta.typedProbability) : meta.typedProbability)
+          : TYPED_ANSWER_PROB;
+      }
+    } else {
+      // category not enabled for typing -> ensure it's treated as typed:false
+      typedProbByCategory[cat] = 0;
     }
   });
 
@@ -975,8 +989,11 @@ function combinations(arr, k) {
 }
 
 // Helper: decide whether to show typed entry for a name-answer question
-// Uses per-category probability if available, otherwise falls back to global TYPED_ANSWER_PROB
+// Uses per-category probability only if that category is enabled in categoryMeta.
+// Categories not present in categoryMeta or without typed:true will never show typed entry.
 function shouldUseTypedEntry(category) {
+  const meta = categoryMeta[category];
+  if (!meta || !meta.typed) return false;
   const p = typedProbByCategory[category];
   const prob = (typeof p === 'number' && !Number.isNaN(p)) ? p : TYPED_ANSWER_PROB;
   return Math.random() < prob;
