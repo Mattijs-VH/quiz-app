@@ -26,6 +26,8 @@ h1 { margin:0; font-size:1.6rem; }
   display:flex; align-items:center;
   gap:8px; padding:8px 10px; border-radius:10px;
   background:#f8fafc; border:1px solid #eef2ff; cursor:pointer;
+  /* allow internal controls to wrap on narrow screens */
+  flex-wrap:wrap;
 }
 .category input { transform:scale(1.03); }
 
@@ -59,11 +61,19 @@ h1 { margin:0; font-size:1.6rem; }
 
 .hidden { display:none; }
 
+/* typed-percentage control styling */
+.typed-control { display:flex; align-items:center; gap:6px; margin-left:6px; color:var(--muted); font-size:0.9rem; }
+.typed-control input.typed-prob { width:64px; padding:4px; border-radius:6px; border:1px solid #ddd; background:transparent; }
+
 /* small screens */
 @media (max-width:600px){
   .container { padding:10px; }
   .question-image { max-width:100%; height:auto; }
   .controls { flex-direction:column; align-items:flex-start; gap:8px; }
+
+  /* ensure category pills wrap nicely on small devices */
+  .category { min-width: 40%; }
+  .typed-control { margin-left:0; margin-top:6px; }
 }
 /* Image zoom modal */
 #imgModal {
@@ -89,4 +99,3 @@ h1 { margin:0; font-size:1.6rem; }
 #imgModal img:active {
   cursor: grabbing;
 }
-
