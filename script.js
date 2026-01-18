@@ -5,6 +5,7 @@
 //  No HTML/CSS changes required
 //  Added: optional typed-answer mode for "name" answers (case-insensitive)
 //  Fix: prevent form submit reload and handle Enter in text input
+//  Fix (this update): show correct answer when a typed answer is wrong
 // ============================================================
 
 const DATA_PATH = 'data.json';
@@ -580,7 +581,8 @@ function renderTypedNameQuestion(correctName, meta = {}) {
     if (chosen.toLowerCase() === String(correctName).trim().toLowerCase()) {
       handleCorrect();
     } else {
-      handleWrong(`you typed “${escapeHtml(chosen)}”.`);
+      // Show the correct answer when typed answer is wrong
+      handleWrong(`you typed “${escapeHtml(chosen)}”. The correct answer is "${escapeHtml(correctName)}".`);
     }
   });
 }
