@@ -7,6 +7,8 @@
 //  Fix: prevent form submit reload and handle Enter in text input
 //  Added: per-category typed-answer metadata support and per-category % controls
 //  Update: categories not present in _meta behave as if typed: false
+//  Update: attempt to avoid browser autofill for typed inputs (randomized input name,
+//          autocomplete/off, autocapitalize/off, spellcheck=false)
 // ============================================================
 
 const DATA_PATH = 'data.json';
@@ -82,6 +84,9 @@ async function init() {
   el.answersForm.addEventListener('submit', e => {
     e.preventDefault();
   });
+  // Try to disable browser autofill by turning off autocomplete for the form
+  // (browsers sometimes ignore this, but combined with randomized input names it helps)
+  el.answersForm.setAttribute('autocomplete', 'off');
 }
 
 // ------------------------------------------------------------
@@ -672,23 +677,34 @@ function buildOptionsAndHook(choices, correct, meta = {}) {
 }
 
 // New: render a typed input for "name" answers (case-insensitive)
+// This version uses a randomized input name and class "typed-answer-input" and sets autocomplete/off
 function renderTypedNameQuestion(correctName, meta = {}) {
   // simple accessible form: a text input and submit button
   const placeholder = 'Type the name here';
+
+  // generate a randomized input name to avoid matching browser-saved values
+  const rndName = `typedAnswer_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+
   el.answersForm.innerHTML = `
     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
       <label style="flex:1; min-width:200px;">
         <input
           type="text"
-          name="typedAnswer"
+          class="typed-answer-input"
+          name="${escapeAttr(rndName)}"
           placeholder="${escapeAttr(placeholder)}"
           aria-label="Type your answer"
+          autocomplete="off"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
           style="width:100%; padding:8px; border-radius:6px; border:1px solid #ddd;"
         />
       </label>
     </div>
   `;
 
+  // hookTextSubmit will query the input by class .typed-answer-input
   hookTextSubmit(val => {
     const q = meta.q;
     const chosenRaw = val;
@@ -759,6 +775,7 @@ function hookSubmit(onSubmit) {
 }
 
 // New: hook for typed text entry questions
+// This queries the input by class ".typed-answer-input" (instead of stable name) to avoid browser autofill matching.
 function hookTextSubmit(onSubmit) {
   try {
     const existingBtns = el.answersForm.querySelectorAll('button.submit-btn');
@@ -774,7 +791,7 @@ function hookTextSubmit(onSubmit) {
     el.answersForm.appendChild(submitBtn);
 
     // Query the input that was rendered and wire Enter to submit
-    const input = el.answersForm.querySelector('input[name="typedAnswer"]');
+    const input = el.answersForm.querySelector('.typed-answer-input');
     if (input) {
       // pressing Enter triggers the same submit flow (and prevented from reloading)
       input.addEventListener('keydown', e => {
@@ -791,7 +808,7 @@ function hookTextSubmit(onSubmit) {
         return;
       }
 
-      const inputNow = el.answersForm.querySelector('input[name="typedAnswer"]');
+      const inputNow = el.answersForm.querySelector('.typed-answer-input');
       if (!inputNow) {
         showToast('No input found.');
         return;
