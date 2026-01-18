@@ -5,13 +5,13 @@
 //  No HTML/CSS changes required
 //  Added: optional typed-answer mode for "name" answers (case-insensitive)
 //  Fix: prevent form submit reload and handle Enter in text input
-//  Fix (this update): show correct answer when a typed answer is wrong
+//  Added: per-category typed-answer metadata support and per-category % controls
 // ============================================================
 
 const DATA_PATH = 'data.json';
 const MAX_OPTIONS = 4;
-// Probability that a "name" answer question will ask for typed input instead of multiple-choice (0..1)
-const TYPED_ANSWER_PROB = 0.5;
+// Default probability that a "name" answer question will ask for typed input instead of multiple-choice (0..1)
+const TYPED_ANSWER_PROB = 0.25;
 
 // ------------------------------------------------------------
 //  GLOBAL STATE
@@ -25,6 +25,9 @@ let currentQuestionIndex = -1;
 let sessionScore = 0;
 let sessionStreak = 0;
 let bestStreak = Number(localStorage.getItem('quiz_highscore') || 0);
+
+// per-category typed entry probability (values 0..1)
+const typedProbByCategory = {};
 
 // ------------------------------------------------------------
 //  DOM ELEMENTS
@@ -61,7 +64,7 @@ async function init() {
     return;
   }
 
-  buildCategoryCheckboxes(Object.keys(rawData));
+  buildCategoryCheckboxes(Object.keys(rawData).filter(k => k !== '_meta'));
   el.highscore.textContent = bestStreak;
 
   el.startBtn.addEventListener('click', startQuiz);
@@ -85,19 +88,110 @@ async function fetchJSON(path) {
 
 // ------------------------------------------------------------
 //  CATEGORY CHECKBOXES
+//  - Supports optional rawData._meta[category] = { typed: true, typedProbability: 0.3 }
+//  - When typed:true is present, a small percentage input appears next to the checkbox.
 // ------------------------------------------------------------
 function buildCategoryCheckboxes(categories) {
   el.categories.innerHTML = '';
+
+  const metaRoot = rawData._meta || {};
+
   categories.forEach(cat => {
     const id = `cat_${cat}`;
     const wrapper = document.createElement('label');
     wrapper.className = 'category';
+
+    // Check if this category has typed-answer metadata
+    const meta = metaRoot[cat] || {};
+    const enabledForTyped = Boolean(meta.typed);
+
+    // Determine initial percentage (0..100)
+    const initialPct = normalizeMetaProbToPct(meta.typedProbability ?? meta.typedProbability ?? meta.typedProbability, TYPED_ANSWER_PROB);
+
+    // store initial in typedProbByCategory as fraction
+    if (enabledForTyped) {
+      typedProbByCategory[cat] = pctToFraction(initialPct);
+    }
+
+    // Build inner HTML. If meta indicates typed support, include a small numeric control (hidden unless checked).
     wrapper.innerHTML = `
       <input type="checkbox" id="${id}" data-cat="${cat}" />
-      <span>${capitalize(cat)}</span>
+      <span style="margin-right:8px;">${capitalize(cat)}</span>
+      ${enabledForTyped ? `
+        <span class="typed-control" style="margin-left:6px; font-size:0.9em; color:var(--muted);">
+          <input
+            type="number"
+            class="typed-prob"
+            data-cat="${cat}"
+            min="0"
+            max="100"
+            step="5"
+            value="${escapeAttr(String(initialPct))}"
+            title="Percent of questions that will require typed answers for this set"
+            style="width:64px; padding:4px; margin-right:4px; border-radius:6px; border:1px solid #ddd;"
+            disabled
+          />
+          %
+        </span>
+      ` : ''}
     `;
+
     el.categories.appendChild(wrapper);
+
+    // Wire up the checkbox to enable the control when selected
+    const checkbox = wrapper.querySelector('input[type="checkbox"]');
+    const probInput = wrapper.querySelector('input.typed-prob');
+
+    if (probInput) {
+      // Enable the input only when checkbox is checked (user wanted this category)
+      checkbox.addEventListener('change', () => {
+        probInput.disabled = !checkbox.checked;
+      });
+
+      // Ensure initial disabled state (checkbox unchecked by default)
+      probInput.disabled = true;
+
+      // Update typedProbByCategory when user changes the percentage
+      probInput.addEventListener('input', () => {
+        const v = Number(probInput.value);
+        if (Number.isNaN(v)) return;
+        const clamped = Math.max(0, Math.min(100, Math.round(v)));
+        probInput.value = String(clamped);
+        typedProbByCategory[cat] = pctToFraction(clamped);
+      });
+
+      // Also handle blur to normalize/validate
+      probInput.addEventListener('blur', () => {
+        const v = Number(probInput.value);
+        if (Number.isNaN(v)) {
+          const pct = Math.round(fractionToPct(typedProbByCategory[cat] ?? TYPED_ANSWER_PROB));
+          probInput.value = String(pct);
+        } else {
+          const clamped = Math.max(0, Math.min(100, Math.round(v)));
+          probInput.value = String(clamped);
+          typedProbByCategory[cat] = pctToFraction(clamped);
+        }
+      });
+    }
   });
+}
+
+// Helper: normalize metadata probability into integer percentage 0..100
+function normalizeMetaProbToPct(metaVal, fallbackFraction) {
+  if (metaVal === undefined || metaVal === null) {
+    return Math.round(fallbackFraction * 100);
+  }
+  const n = Number(metaVal);
+  if (Number.isNaN(n)) return Math.round(fallbackFraction * 100);
+  // accept either fraction (0..1) or percentage (0..100)
+  if (n > 1) return Math.max(0, Math.min(100, Math.round(n)));
+  return Math.max(0, Math.min(100, Math.round(n * 100)));
+}
+function pctToFraction(pct) {
+  return Math.max(0, Math.min(1, Number(pct) / 100));
+}
+function fractionToPct(frac) {
+  return Math.round((frac || 0) * 100);
 }
 
 // ------------------------------------------------------------
@@ -105,13 +199,27 @@ function buildCategoryCheckboxes(categories) {
 // ------------------------------------------------------------
 function startQuiz() {
   selectedCategories = Array.from(
-    el.categories.querySelectorAll('input:checked')
+    el.categories.querySelectorAll('input[type="checkbox"]:checked')
   ).map(i => i.dataset.cat);
 
   if (selectedCategories.length === 0) {
     showToast('Please select at least one category.');
     return;
   }
+
+  // Ensure typedProbByCategory has entries for selected categories (fill with default when missing)
+  selectedCategories.forEach(cat => {
+    if (typedProbByCategory[cat] === undefined) {
+      // If metadata exists and specifies a default, it should already be set during buildCategoryCheckboxes.
+      // Otherwise use the global default.
+      typedProbByCategory[cat] = TYPED_ANSWER_PROB;
+    }
+    // If there's a numeric input in the UI, prefer that value (it's already wired to update typedProbByCategory)
+    const input = el.categories.querySelector(`input.typed-prob[data-cat="${cat}"]`);
+    if (input && input.value !== '') {
+      typedProbByCategory[cat] = pctToFraction(Number(input.value));
+    }
+  });
 
   buildQuestionPool();
 
@@ -211,6 +319,7 @@ function buildQuestionPool() {
   questionPool = [];
 
   for (const cat of Object.keys(rawData)) {
+    if (cat === '_meta') continue;
     if (!selectedCategories.includes(cat)) continue;
 
     const items = rawData[cat] || [];
@@ -397,8 +506,8 @@ function renderPropertyToName(q) {
     `Which ${q.category} has ${propLabel(q.property)} = "${q.value}"?`;
   const correct = q.correct;
 
-  // If we decide to ask for typed input (only for questions where the answer is a name)
-  if (shouldUseTypedEntry()) {
+  // Use per-category probability if available
+  if (shouldUseTypedEntry(q.category)) {
     renderTypedNameQuestion(correct, { q });
     return;
   }
@@ -425,8 +534,7 @@ function renderPropertiesToName(q) {
 
   const correct = q.correct;
 
-  // typed entry option for name answers
-  if (shouldUseTypedEntry()) {
+  if (shouldUseTypedEntry(q.category)) {
     renderTypedNameQuestion(correct, { q });
     return;
   }
@@ -496,8 +604,7 @@ function renderImageToName(q) {
 
   const correct = q.name;
 
-  // typed entry option for name answers
-  if (shouldUseTypedEntry()) {
+  if (shouldUseTypedEntry(q.category)) {
     renderTypedNameQuestion(correct, { q });
     return;
   }
@@ -868,8 +975,11 @@ function combinations(arr, k) {
 }
 
 // Helper: decide whether to show typed entry for a name-answer question
-function shouldUseTypedEntry() {
-  return Math.random() < TYPED_ANSWER_PROB;
+// Uses per-category probability if available, otherwise falls back to global TYPED_ANSWER_PROB
+function shouldUseTypedEntry(category) {
+  const p = typedProbByCategory[category];
+  const prob = (typeof p === 'number' && !Number.isNaN(p)) ? p : TYPED_ANSWER_PROB;
+  return Math.random() < prob;
 }
 
 // ------------------------------------------------------------
