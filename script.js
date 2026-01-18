@@ -10,6 +10,7 @@
 //  Update: attempt to avoid browser autofill for typed inputs (randomized input name,
 //          autocomplete/off, autocapitalize/off, spellcheck=false)
 //  Update: accept typed answers that are one edit away (insertion/deletion/replacement)
+//  Update: when a fuzzy match is accepted, show feedback with the correct spelling
 // ============================================================
 
 const DATA_PATH = 'data.json';
@@ -716,9 +717,13 @@ function renderTypedNameQuestion(correctName, meta = {}) {
 
     const chosen = String(chosenRaw).trim();
 
-    // Compare using fuzzy check: exact match ignoring case/diacritics OR within one edit
-    if (isCloseMatch(chosen, correctName)) {
+    // Compare using fuzzy check which distinguishes exact vs fuzzy matches
+    const cmp = compareAnswers(chosen, correctName);
+    if (cmp === 'exact') {
       handleCorrect();
+    } else if (cmp === 'fuzzy') {
+      // accepted because within one edit: show correct spelling in the positive feedback
+      handleCorrect(correctName);
     } else {
       // Show the correct answer when typed answer is wrong
       handleWrong(`you typed “${escapeHtml(chosen)}”. The correct answer is "${escapeHtml(correctName)}".`);
@@ -844,7 +849,8 @@ function hookTextSubmit(onSubmit) {
 // ------------------------------------------------------------
 //  SCORING / FEEDBACK
 // ------------------------------------------------------------
-function handleCorrect() {
+// note: `note` is optional. When provided it is used to show the correct spelling in the feedback.
+function handleCorrect(note) {
   sessionScore += 1;
   sessionStreak += 1;
 
@@ -854,8 +860,14 @@ function handleCorrect() {
   }
 
   updateScoreUI();
-  el.feedback.innerHTML =
-    `<div class="correct">Correct! 🔥 Streak: ${sessionStreak}</div>`;
+
+  if (note) {
+    el.feedback.innerHTML =
+      `<div class="correct">Correct! 🔥 Streak: ${sessionStreak}. Correct spelling: "${escapeHtml(note)}"</div>`;
+  } else {
+    el.feedback.innerHTML =
+      `<div class="correct">Correct! 🔥 Streak: ${sessionStreak}</div>`;
+  }
 }
 
 function handleWrong(detailText) {
@@ -1031,12 +1043,14 @@ function normalizeForCompare(s) {
     .toLowerCase();
 }
 
-// Return true if strings are equal after normalization or within one edit (insertion/deletion/replacement)
-function isCloseMatch(a, b) {
+// Compare answers and distinguish exact vs fuzzy vs no match
+// returns 'exact' | 'fuzzy' | 'no'
+function compareAnswers(a, b) {
   const x = normalizeForCompare(a);
   const y = normalizeForCompare(b);
-  if (x === y) return true;
-  return isEditDistanceAtMostOne(x, y);
+  if (x === y) return 'exact';
+  if (isEditDistanceAtMostOne(x, y)) return 'fuzzy';
+  return 'no';
 }
 
 // Linear-time check whether edit distance <= 1 (supports insertion, deletion, replacement)
