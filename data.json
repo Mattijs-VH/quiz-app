@@ -216,7 +216,7 @@
       "name": "Neisseria meningitidis",
       "gram": "negatief",
       "vorm": "kokken",
-      "pathologie": "verwekker hersenvliesontsteking",
+      "pathologie": "verwekker meningitis",
       "groepering": "per 2"
     },
     {
@@ -248,7 +248,7 @@
       "gram": "positief",
       "vorm": "bacillen",
       "katalase": "negatief",
-      "pathologie": "veroorzaakt botumisme (= slappe verlamming)",
+      "pathologie": "veroorzaakt botulisme (= slappe verlamming)",
       "ademhaling": "anaeroob"
     },
     {
