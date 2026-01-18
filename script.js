@@ -9,6 +9,7 @@
 //  Update: categories not present in _meta behave as if typed: false
 //  Update: attempt to avoid browser autofill for typed inputs (randomized input name,
 //          autocomplete/off, autocapitalize/off, spellcheck=false)
+//  Update: accept typed answers that are one edit away (insertion/deletion/replacement)
 // ============================================================
 
 const DATA_PATH = 'data.json';
@@ -714,8 +715,9 @@ function renderTypedNameQuestion(correctName, meta = {}) {
     }
 
     const chosen = String(chosenRaw).trim();
-    // Compare case-insensitively (ignore capitalization)
-    if (chosen.toLowerCase() === String(correctName).trim().toLowerCase()) {
+
+    // Compare using fuzzy check: exact match ignoring case/diacritics OR within one edit
+    if (isCloseMatch(chosen, correctName)) {
       handleCorrect();
     } else {
       // Show the correct answer when typed answer is wrong
@@ -1014,6 +1016,63 @@ function shouldUseTypedEntry(category) {
   const p = typedProbByCategory[category];
   const prob = (typeof p === 'number' && !Number.isNaN(p)) ? p : TYPED_ANSWER_PROB;
   return Math.random() < prob;
+}
+
+// ------------------------------------------------------------
+//  FUZZY MATCH (allow one edit: insert/delete/replace)
+// ------------------------------------------------------------
+// Normalize strings: trim, lower-case and remove diacritics
+function normalizeForCompare(s) {
+  if (s === null || s === undefined) return '';
+  return String(s)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // strip diacritics
+    .trim()
+    .toLowerCase();
+}
+
+// Return true if strings are equal after normalization or within one edit (insertion/deletion/replacement)
+function isCloseMatch(a, b) {
+  const x = normalizeForCompare(a);
+  const y = normalizeForCompare(b);
+  if (x === y) return true;
+  return isEditDistanceAtMostOne(x, y);
+}
+
+// Linear-time check whether edit distance <= 1 (supports insertion, deletion, replacement)
+function isEditDistanceAtMostOne(s, t) {
+  const n = s.length;
+  const m = t.length;
+  if (Math.abs(n - m) > 1) return false;
+
+  // if lengths equal => check for at most one replacement
+  if (n === m) {
+    let diff = 0;
+    for (let i = 0; i < n; i++) {
+      if (s[i] !== t[i]) {
+        diff++;
+        if (diff > 1) return false;
+      }
+    }
+    return diff <= 1;
+  }
+
+  // ensure s is the shorter
+  if (n > m) return isEditDistanceAtMostOne(t, s);
+
+  // now m = n+1: check if you can insert one char into s to make t
+  let i = 0, j = 0;
+  let skipped = false;
+  while (i < n && j < m) {
+    if (s[i] === t[j]) {
+      i++; j++;
+    } else {
+      if (skipped) return false;
+      skipped = true;
+      j++; // skip one char in longer string
+    }
+  }
+  return true; // either matched with <=1 skip or reached end
 }
 
 // ------------------------------------------------------------
